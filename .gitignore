@@ -1,0 +1,53 @@
+# ── Dependencies ──
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ── Build output ──
+dist/
+dist-ssr/
+build/
+out/
+
+# ── Vite ──
+*.local
+vite.config.*.timestamp-*
+
+# ── Environment & secrets ──
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Claude Code ──
+.claude/
+
+# ── Logs ──
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Testing ──
+coverage/
+.nyc_output/
+
+# ── Misc ──
+*.tgz
+*.zip
