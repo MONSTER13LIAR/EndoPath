@@ -33,7 +33,10 @@ export default function FadeIn({
           return () => clearTimeout(t)
         }
       },
-      { threshold: 0.12 }
+      { 
+        threshold: 0.2,
+        rootMargin: '0px 0px -15% 0px' 
+      }
     )
     observer.observe(el)
     return () => observer.disconnect()

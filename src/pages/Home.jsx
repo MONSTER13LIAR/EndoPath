@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './Home.module.css'
 import AnimatedHeadline from '../components/AnimatedHeadline'
@@ -11,6 +12,41 @@ const WHY_CARDS = [
   { icon: '💬', title: 'Community Support',      desc: 'Connect with others on the same journey in a safe, moderated space.' },
   { icon: '📅', title: 'Appointment Prep',       desc: 'Never forget your symptoms before an appointment — EndoPath remembers.' },
 ]
+
+function WhyCard({ card }) {
+  const ref = useRef(null)
+  const [isFocused, setIsFocused] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFocused(entry.isIntersecting)
+      },
+      {
+        // Adjust these to change when the "focus" happens
+        rootMargin: '-25% 0px -45% 0px',
+        threshold: 0.1,
+      }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`${styles.whyCard} ${isFocused ? styles.focused : ''}`}
+    >
+      <div className={styles.whyIcon}>{card.icon}</div>
+      <h3>{card.title}</h3>
+      <p>{card.desc}</p>
+    </div>
+  )
+}
 
 const STATS = [
   { num: '190M+',    label: 'People affected worldwide' },
@@ -48,41 +84,42 @@ export default function Home() {
 
         <FadeIn immediate delay={700} duration={900} distance={18}>
           <p className={styles.heroSub}>
-            Log your pain. See the pattern. Walk into your doctor's office with proof.
+            AI-powered endometriosis companion. Predict. Confirm. Understand. Manage. Recover.
           </p>
         </FadeIn>
 
         <FadeIn immediate delay={1100} duration={900} distance={18}>
           <div className={styles.heroCta}>
-            <a href="/register" className={`${styles.btn} ${styles.primary} ${styles.lg}`}>
-              Get Started
+            <a href="/dashboard" className={`${styles.btn} ${styles.primary} ${styles.lg}`}>
+              Try EndoPath
             </a>
             <Link to="/features" className={`${styles.btn} ${styles.ghost} ${styles.lg}`}>
               See How It Works
             </Link>
           </div>
         </FadeIn>
+
+        {/* ── Stats carousel — pinned to bottom of viewport ── */}
+        <FadeIn immediate delay={1500} duration={1000} distance={12} className={styles.statsAnchor}>
+          <div className={styles.statsCarousel}>
+            {/* duplicate items for seamless infinite loop */}
+            <div className={styles.statsTrack}>
+              {[...STATS, ...STATS, ...STATS].map((s, i) => (
+                <div key={i} className={styles.statItem}>
+                  <div className={styles.statNum}>{s.num}</div>
+                  <div className={styles.statLabel}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
       </section>
 
-      {/* ── Stats ── */}
-      <FadeIn distance={16} duration={800}>
-        <div className={styles.stats}>
-          {STATS.map((s, i) => (
-            <FadeIn key={s.num} distance={12} duration={600} delay={i * 120}>
-              <div className={styles.stat}>
-                <div className={styles.statNum}>{s.num}</div>
-                <div className={styles.statLabel}>{s.label}</div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </FadeIn>
-
-      {/* ── Why EndoPath ── */}
+      {/* ── Why Endo Path ── */}
       <section className={styles.section}>
         <div className={styles.container}>
           <FadeIn duration={700}>
-            <p className={styles.sectionLabel}>Why EndoPath</p>
+            <p className={styles.sectionLabel}>Why Endo Path</p>
             <h2 className={styles.sectionTitle}>Built around your experience</h2>
             <p className={styles.sectionSub}>
               Every feature was designed with one goal — to give you more control
@@ -91,55 +128,21 @@ export default function Home() {
           </FadeIn>
 
           <div className={styles.whyGrid}>
-            {WHY_CARDS.map((c, i) => (
-              <FadeIn key={c.title} duration={650} delay={i * 90} distance={20}>
-                <div className={styles.whyCard}>
-                  <div className={styles.whyIcon}>{c.icon}</div>
-                  <h3>{c.title}</h3>
-                  <p>{c.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How It Works ── */}
-      <section className={`${styles.section} ${styles.surfaceBg}`}>
-        <div className={styles.container}>
-          <FadeIn duration={700}>
-            <p className={styles.sectionLabel}>How It Works</p>
-            <h2 className={styles.sectionTitle}>Simple. Consistent. Powerful.</h2>
-            <p className={styles.sectionSub}>
-              Getting started takes less than two minutes. Building your health
-              record takes just seconds each day.
-            </p>
-          </FadeIn>
-
-          <div className={styles.steps}>
-            {STEPS.map((s, i) => (
-              <FadeIn key={s.title} duration={650} delay={i * 120} distance={16}>
-                <div className={styles.step}>
-                  <div className={styles.stepNum}>{i + 1}</div>
-                  <div className={styles.stepBody}>
-                    <h4>{s.title}</h4>
-                    <p>{s.desc}</p>
-                  </div>
-                </div>
-              </FadeIn>
+            {WHY_CARDS.map((c) => (
+              <WhyCard key={c.title} card={c} />
             ))}
           </div>
         </div>
       </section>
 
       {/* ── CTA Banner ── */}
-      <section className={styles.section}>
+      <section className={`${styles.section} ${styles.ctaSection}`}>
         <div className={styles.container}>
           <FadeIn duration={800} distance={28}>
             <div className={styles.ctaBanner}>
-              <h2>You deserve answers. We help you find them.</h2>
-              <p>Join thousands of people taking control of their endometriosis journey.</p>
-              <a href="/register" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
+              <h2>Predict to Recover</h2>
+              <p>Your full journey : Start now</p>
+              <a href="/dashboard" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
                 Get Started
               </a>
             </div>
@@ -148,15 +151,15 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <FadeIn duration={600} distance={10}>
-        <footer className={styles.footer}>
-          <p>
-            &copy; 2026 EndoPath &mdash;{' '}
-            <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a>
-          </p>
-          <p className={styles.footerRights}>All rights reserved to MONSTER LIAR</p>
-        </footer>
-      </FadeIn>
+      <footer className={styles.footer}>
+        <p>
+          &copy; 2026 EndoPath &mdash;{' '}
+          <a href="#">Privacy Policy</a> &middot; <a href="#">Terms of Service</a>
+        </p>
+        <p className={styles.footerRights}>
+          All rights reserved to MONSTER LIAR &middot; Made with ❤️ for Hackathon 2026
+        </p>
+      </footer>
     </main>
   )
 }

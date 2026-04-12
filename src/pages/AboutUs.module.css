@@ -1,0 +1,183 @@
+/* ── Page shell ── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 1.5rem 5rem;
+  gap: 4rem;
+}
+
+/* ── Profile section ── */
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 680px;
+  text-align: center;
+}
+
+/* circular frame */
+.pfpWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pfpRing {
+  border-radius: 50%;
+  padding: 5px;
+  background: conic-gradient(
+    from 0deg,
+    #CC0000 0%,
+    #8B0000 25%,
+    #FF2200 50%,
+    #8B0000 75%,
+    #CC0000 100%
+  );
+  box-shadow:
+    0 0 18px rgba(204, 0, 0, 0.55),
+    0 0 45px rgba(180, 0, 0, 0.30),
+    0 0 80px rgba(140, 0, 0, 0.15);
+  animation: ringPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 18px rgba(204, 0, 0, 0.55),
+      0 0 45px rgba(180, 0, 0, 0.30),
+      0 0 80px rgba(140, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgba(255, 20, 0, 0.80),
+      0 0 65px rgba(204, 0,  0, 0.50),
+      0 0 110px rgba(160, 0, 0, 0.25);
+  }
+}
+
+/* inner dark backing so gradient ring looks like a border */
+.pfpRing::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--bg);
+  z-index: 0;
+}
+
+.pfpRing svg {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  display: block;
+}
+
+/* ── Name & role ── */
+.name {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+
+.role {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Bio ── */
+.bio {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 580px;
+  margin-top: 0.5rem;
+}
+
+/* ── Contact section ── */
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.contactHeading {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* GitHub card */
+.contactCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.contactCard:hover {
+  border-color: rgba(167, 139, 250, 0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+.contactIcon {
+  width: 28px;
+  height: 28px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.contactLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contactHandle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.contactArrow {
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.contactCard:hover .contactArrow {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}

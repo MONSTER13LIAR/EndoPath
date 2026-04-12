@@ -70,12 +70,12 @@
 .logo_text {
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--accent);
+  color: #FF69B4; /* Hot Pink for "Endo" */
   letter-spacing: -0.4px;
   white-space: nowrap;
 }
 
-.logo_text span { color: var(--text); }
+.logo_text span { color: var(--text); } /* "Path" in default white/text color */
 
 /* ── Nav links ── */
 .links {

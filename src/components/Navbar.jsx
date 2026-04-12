@@ -35,7 +35,7 @@ export default function Navbar() {
         <div className={styles.actions}>
           <a href="/login" className={styles.loginLink}>Log In</a>
           <a href="/register" className={styles.ctaBtn}>
-            Get Started
+            Sign Up
             <span className={styles.ctaArrow}>→</span>
           </a>
         </div>
