@@ -1,0 +1,17 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding-top: 64px;
+  color: var(--muted);
+}
+
+.page h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text);
+}

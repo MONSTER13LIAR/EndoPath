@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:   #7C3AED;
+  --primary-d: #5B21B6;
+  --accent:    #A78BFA;
+  --bg:        #060310;
+  --surface:   #0d0820;
+  --card:      #130d2a;
+  --text:      #F3F0FF;
+  --muted:     #A094C0;
+  --border:    rgba(167,139,250,0.18);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a { text-decoration: none; }
+
+/* everything rendered above the fixed grid */
+#root { position: relative; z-index: 1; }

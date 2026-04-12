@@ -1,0 +1,57 @@
+.headline {
+  /* sizing handled by heroHeadline in Home.module.css */
+}
+
+.char {
+  display: inline-block;
+  transform-origin: center bottom;
+  animation:
+    lineShow   1s    ease                             both  var(--line-show-delay,  0s),
+    lineExpand var(--expand-duration, 1.6s) cubic-bezier(0.16, 1, 0.3, 1) both  var(--expand-delay, 1s);
+}
+
+.space {
+  /* spaces just fade in quietly alongside the lines */
+  animation: spaceFade 0.6s ease both var(--line-show-delay, 0s);
+}
+
+/* ── Phase 1: all lines snap in together ── */
+@keyframes lineShow {
+  0% {
+    transform: scaleX(0) scaleY(0.85);
+    opacity: 0;
+    color: transparent;
+  }
+  100% {
+    transform: scaleX(0.04) scaleY(1);
+    opacity: 1;
+    color: #a78bfa;
+    text-shadow:
+      0 0 8px  rgba(167, 139, 250, 1.0),
+      0 0 24px rgba(124, 58,  237, 0.7);
+  }
+}
+
+/* ── Phase 2: all lines widen into letters together ── */
+@keyframes lineExpand {
+  0% {
+    transform: scaleX(0.04) scaleY(1);
+    color: #a78bfa;
+    text-shadow:
+      0 0 8px  rgba(167, 139, 250, 1.0),
+      0 0 24px rgba(124, 58,  237, 0.7);
+  }
+  60% {
+    text-shadow: 0 0 4px rgba(167, 139, 250, 0.3);
+  }
+  100% {
+    transform: scaleX(1) scaleY(1);
+    color: #f3f0ff;
+    text-shadow: none;
+  }
+}
+
+@keyframes spaceFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
