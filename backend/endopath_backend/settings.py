@@ -39,4 +39,12 @@ CORS_ALLOW_HEADERS = [
 # Claude API key — set via environment variable
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
+# Google OAuth
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
+# JWT signing secret
+JWT_SECRET = os.environ.get('JWT_SECRET')
+if not JWT_SECRET:
+    raise RuntimeError('JWT_SECRET environment variable is not set')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

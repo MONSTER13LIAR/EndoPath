@@ -4,6 +4,7 @@ import Spline from '@splinetool/react-spline'
 import styles from './Home.module.css'
 import AnimatedHeadline from '../components/AnimatedHeadline'
 import FadeIn from '../components/FadeIn'
+import { useAuth } from '../context/AuthContext'
 
 const WHY_CARDS = [
   { 
@@ -118,6 +119,8 @@ const STEPS = [
 */
 
 export default function Home() {
+  const { triggerLogin } = useAuth()
+
   return (
     <main>
       {/* ── Hero ── */}
@@ -139,9 +142,9 @@ export default function Home() {
             <a href="/dashboard" className={`${styles.btn} ${styles.primary} ${styles.lg}`}>
               Try EndoPath
             </a>
-            <Link to="/features" className={`${styles.btn} ${styles.ghost} ${styles.lg}`}>
+            <button onClick={() => triggerLogin()} className={`${styles.btn} ${styles.ghost} ${styles.lg}`}>
               See How It Works
-            </Link>
+            </button>
           </div>
         </FadeIn>
 
@@ -195,9 +198,9 @@ export default function Home() {
               <div className={styles.ctaContent}>
                 <h2>Predict to Recover</h2>
                 <p>Your full journey : Start now</p>
-                <a href="#" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
+                <button onClick={() => triggerLogin()} className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
                   Get Started
-                </a>
+                </button>
               </div>
             </div>
           </FadeIn>

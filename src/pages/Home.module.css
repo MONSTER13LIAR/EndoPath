@@ -89,6 +89,10 @@
   cursor: pointer;
   transition: all 0.2s;
   display: inline-block;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: center;
 }
 
 .lg {

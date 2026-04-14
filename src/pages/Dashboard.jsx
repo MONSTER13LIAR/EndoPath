@@ -2,18 +2,16 @@ import { Link } from 'react-router-dom'
 import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
-
-// null = demo / "try model" mode (no name shown)
-const USER_NAME = null
+import { useAuth } from '../context/AuthContext'
 
 const STATS = [
   {
     label: 'Flare Risk',
-    value: 'Low',
+    demoValue: 'Low',
     color: '#10B981',
     bg: 'rgba(16, 185, 129, 0.08)',
     border: 'rgba(16, 185, 129, 0.25)',
-    trend: '−12% vs last week',
+    demoTrend: '−12% vs last week',
     trendPositive: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,11 +22,11 @@ const STATS = [
   },
   {
     label: 'Days Logged',
-    value: '18 / 21',
+    demoValue: '18 / 21',
     color: '#7C3AED',
     bg: 'rgba(124, 58, 237, 0.08)',
     border: 'rgba(124, 58, 237, 0.25)',
-    trend: '+4 days this month',
+    demoTrend: '+4 days this month',
     trendPositive: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -40,11 +38,11 @@ const STATS = [
   },
   {
     label: 'Avg Pain Level',
-    value: '2.4',
+    demoValue: '2.4',
     color: '#F59E0B',
     bg: 'rgba(245, 158, 11, 0.08)',
     border: 'rgba(245, 158, 11, 0.25)',
-    trend: '−0.5 pts improving',
+    demoTrend: '−0.5 pts improving',
     trendPositive: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,11 +52,11 @@ const STATS = [
   },
   {
     label: 'Next Cycle',
-    value: '4 days',
+    demoValue: '4 days',
     color: '#EC4899',
     bg: 'rgba(236, 72, 153, 0.08)',
     border: 'rgba(236, 72, 153, 0.25)',
-    trend: 'On track',
+    demoTrend: 'On track',
     trendPositive: null,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -69,8 +67,8 @@ const STATS = [
   },
 ]
 
-const CHART_DAYS  = ['M','T','W','T','F','S','S','M','T','W','T','F','S','T']
-const CHART_DATA  = [40, 60, 30, 80, 50, 20, 15, 45, 55, 35, 25, 10, 5, 12]
+const CHART_DAYS = ['M','T','W','T','F','S','S','M','T','W','T','F','S','T']
+const CHART_DATA = [40, 60, 30, 80, 50, 20, 15, 45, 55, 35, 25, 10, 5, 12]
 
 const RECENT_LOGS = [
   { time: '2 hours ago',  symptom: 'Mild pelvic cramping',         intensity: 3, icon: '🌀' },
@@ -80,9 +78,9 @@ const RECENT_LOGS = [
 ]
 
 const UPCOMING = [
-  { label: 'Cycle begins',            sub: 'in 4 days',  color: '#EC4899' },
-  { label: 'Dr. Martinez appointment',sub: 'Apr 18',     color: '#7C3AED' },
-  { label: 'Weekly symptom review',   sub: 'Apr 16',     color: '#10B981' },
+  { label: 'Cycle begins',             sub: 'in 4 days', color: '#EC4899' },
+  { label: 'Dr. Martinez appointment', sub: 'Apr 18',    color: '#7C3AED' },
+  { label: 'Weekly symptom review',    sub: 'Apr 16',    color: '#10B981' },
 ]
 
 function intensityColor(n) {
@@ -98,6 +96,9 @@ function intensityTagColor(n) {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth()
+  const isDemo = !user
+
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   })
@@ -114,7 +115,7 @@ export default function Dashboard() {
             <div className={styles.welcome}>
               <span className={styles.welcomeEyebrow}>Dashboard</span>
               <h1>
-                {USER_NAME ? `Welcome back, ${USER_NAME}` : 'Welcome back'}
+                {user ? `Welcome back, ${user.name.split(' ')[0]}` : 'Welcome back'}
               </h1>
               <p>{today}</p>
             </div>
@@ -122,16 +123,20 @@ export default function Dashboard() {
               <div className={styles.healthScore}>
                 <svg className={styles.scoreRing} viewBox="0 0 44 44">
                   <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(124,58,237,0.15)" strokeWidth="4"/>
-                  <circle cx="22" cy="22" r="18" fill="none" stroke="#7C3AED"
-                    strokeWidth="4" strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 18 * 0.74} ${2 * Math.PI * 18 * 0.26}`}
-                    strokeDashoffset={2 * Math.PI * 18 * 0.25}
-                  />
-                  <text x="22" y="27" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">74</text>
+                  {isDemo && (
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="#7C3AED"
+                      strokeWidth="4" strokeLinecap="round"
+                      strokeDasharray={`${2 * Math.PI * 18 * 0.74} ${2 * Math.PI * 18 * 0.26}`}
+                      strokeDashoffset={2 * Math.PI * 18 * 0.25}
+                    />
+                  )}
+                  <text x="22" y="27" textAnchor="middle" fontSize="11" fontWeight="800" fill={isDemo ? '#fff' : 'rgba(255,255,255,0.3)'}>
+                    {isDemo ? '74' : '—'}
+                  </text>
                 </svg>
                 <div className={styles.healthScoreText}>
                   <span className={styles.healthScoreLabel}>Health Score</span>
-                  <span className={styles.healthScoreSub}>Good standing</span>
+                  <span className={styles.healthScoreSub}>{isDemo ? 'Good standing' : 'No data yet'}</span>
                 </div>
               </div>
               <button className={styles.logBtn}>
@@ -142,8 +147,8 @@ export default function Dashboard() {
           </header>
         </FadeIn>
 
-        {/* ── Demo blur + signup overlay ── */}
-        {USER_NAME === null && (
+        {/* ── Demo blur + signup overlay (only in demo mode) ── */}
+        {isDemo && (
           <div className={styles.signupOverlay}>
             <div className={styles.signupCard}>
               <div className={styles.signupIcon}>
@@ -166,7 +171,7 @@ export default function Dashboard() {
         )}
 
         {/* ── Stat Cards ── */}
-        <section className={`${styles.statsGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
+        <section className={`${styles.statsGrid} ${isDemo ? styles.blurred : ''}`}>
           {STATS.map((s, i) => (
             <FadeIn key={s.label} delay={i * 80} duration={700} distance={20}>
               <div
@@ -185,16 +190,20 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-                <div className={styles.statValue}>{s.value}</div>
+                <div className={styles.statValue}>
+                  {isDemo ? s.demoValue : '—'}
+                </div>
                 <div className={styles.statLabel}>{s.label}</div>
-                <div className={styles.statTrend}>{s.trend}</div>
+                <div className={styles.statTrend}>
+                  {isDemo ? s.demoTrend : 'No data yet'}
+                </div>
               </div>
             </FadeIn>
           ))}
         </section>
 
         {/* ── Main Grid ── */}
-        <div className={`${styles.mainGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
+        <div className={`${styles.mainGrid} ${isDemo ? styles.blurred : ''}`}>
 
           {/* Chart */}
           <FadeIn delay={350} duration={800} distance={25}>
@@ -227,33 +236,45 @@ export default function Dashboard() {
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <h3>Recent Activity</h3>
-                <span className={styles.viewAll}>View all</span>
+                {isDemo && <span className={styles.viewAll}>View all</span>}
               </div>
               <div className={styles.activityList}>
-                {RECENT_LOGS.map((log, i) => {
-                  const tc = intensityTagColor(log.intensity)
-                  return (
-                    <div key={i} className={styles.activityItem}>
-                      <div className={styles.activityEmoji}>{log.icon}</div>
-                      <div className={styles.activityInfo}>
-                        <strong>{log.symptom}</strong>
-                        <span>{log.time}</span>
-                      </div>
-                      {log.intensity > 0 && (
-                        <div className={styles.intensityTag} style={{ background: tc.bg, color: tc.color }}>
-                          Lvl {log.intensity}
+                {isDemo ? (
+                  RECENT_LOGS.map((log, i) => {
+                    const tc = intensityTagColor(log.intensity)
+                    return (
+                      <div key={i} className={styles.activityItem}>
+                        <div className={styles.activityEmoji}>{log.icon}</div>
+                        <div className={styles.activityInfo}>
+                          <strong>{log.symptom}</strong>
+                          <span>{log.time}</span>
                         </div>
-                      )}
-                    </div>
-                  )
-                })}
+                        {log.intensity > 0 && (
+                          <div className={styles.intensityTag} style={{ background: tc.bg, color: tc.color }}>
+                            Lvl {log.intensity}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })
+                ) : (
+                  <div className={styles.emptyState}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{opacity:0.3}}>
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                      <line x1="12" y1="18" x2="12" y2="12"/>
+                      <line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                    <p>No symptoms logged yet.<br/>Hit <strong>Log Symptom</strong> to start tracking.</p>
+                  </div>
+                )}
               </div>
             </div>
           </FadeIn>
         </div>
 
         {/* ── Bottom Row ── */}
-        <div className={`${styles.bottomGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
+        <div className={`${styles.bottomGrid} ${isDemo ? styles.blurred : ''}`}>
 
           {/* AI Insight */}
           <FadeIn delay={550} duration={800} distance={25}>
