@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import styles from './Library.module.css'
 import FadeIn from '../components/FadeIn'
@@ -5,6 +6,39 @@ import FlowingParticles from '../components/FlowingParticles'
 
 export default function Library() {
   const { isLocked } = useOutletContext()
+  const [query, setQuery] = useState('')
+  const [response, setResponse] = useState(null)   // { question, answer }
+  const [loading, setLoading] = useState(false)
+  const responseRef = useRef(null)
+
+  // Scroll response block to bottom when answer updates
+  useEffect(() => {
+    if (responseRef.current) responseRef.current.scrollTop = responseRef.current.scrollHeight
+  }, [response])
+
+  const handleSend = async (e) => {
+    e.preventDefault()
+    if (!query.trim() || loading) return
+
+    const question = query.trim()
+    setQuery('')
+    setLoading(true)
+    setResponse({ question, answer: null })
+
+    try {
+      const res = await fetch('http://localhost:8000/api/nerdai/chat/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: question }),
+      })
+      const data = await res.json()
+      setResponse({ question, answer: data.content ?? data.error ?? 'Something went wrong.' })
+    } catch {
+      setResponse({ question, answer: 'Could not reach the server. Please try again.' })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className={styles.libraryLayout}>
@@ -119,6 +153,74 @@ export default function Library() {
           </FadeIn>
 
         </div>
+
+        {/* ── Sticky chat bar + response block ── */}
+        <div className={styles.chatBarWrap}>
+
+          {/* NerdAI response block */}
+          {response && (
+            <div className={styles.nerdBlock}>
+              {/* Header */}
+              <div className={styles.nerdHeader}>
+                <div className={styles.nerdBadge}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  NerdAI
+                </div>
+                <button
+                  type="button"
+                  className={styles.nerdClose}
+                  onClick={() => setResponse(null)}
+                  title="Dismiss"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
+              {/* Question echo */}
+              <p className={styles.nerdQuestion}>{response.question}</p>
+
+              {/* Answer */}
+              <div className={styles.nerdAnswer} ref={responseRef}>
+                {loading
+                  ? <span className={styles.nerdLoading}>Thinking…</span>
+                  : <span>{response.answer}</span>
+                }
+              </div>
+            </div>
+          )}
+
+          {/* Chat bar */}
+          <form className={styles.chatBar} onSubmit={handleSend}>
+            <button type="button" className={styles.chatBarBtn} title="Voice input">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+
+            <input
+              type="text"
+              className={styles.chatBarInput}
+              placeholder="Ask NerdAI anything about your library…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+
+            <button type="submit" className={styles.chatBarSend} disabled={loading} title="Send">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+
       </FadeIn>
     </div>
   )

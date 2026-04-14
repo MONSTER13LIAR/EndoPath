@@ -106,6 +106,52 @@ def endoai_chat(request):
 
 
 # ---------------------------------------------------------------------------
+# NerdAI — Library research & health-record assistant
+# ---------------------------------------------------------------------------
+
+NERDAI_SYSTEM = """You are NerdAI, the knowledgeable research assistant inside EndoPath's Health Library.
+
+Your personality: precise, a little nerdy, genuinely enthusiastic about medical knowledge — but always clear and jargon-free when it matters.
+
+Your job:
+- Explain medical terms, conditions, and procedures related to endometriosis and women's health
+- Help users understand entries in their health library (body maps, symptom logs, chat history)
+- Provide research context: what a symptom might mean, what a treatment does, what a test measures
+- Answer questions about endometriosis stages, treatments, hormones, pain management, fertility
+
+Rules:
+- Keep answers concise — 2-4 short paragraphs max. The user can see the library behind you.
+- Always remind users you are an AI and not a substitute for their doctor when giving clinical guidance.
+- Be accurate. If unsure, say so rather than guessing.
+- Use plain language; introduce medical terms only when helpful, then immediately explain them."""
+
+@csrf_exempt
+@require_POST
+def nerdai_chat(request):
+    try:
+        body = json.loads(request.body)
+        message = body.get('message', '').strip()
+        if not message:
+            return JsonResponse({'error': 'message is required'}, status=400)
+
+        client = _get_client()
+        response = client.messages.create(
+            model='claude-sonnet-4-6',
+            max_tokens=512,
+            system=NERDAI_SYSTEM,
+            messages=[{'role': 'user', 'content': message}],
+        )
+        return JsonResponse({'content': response.content[0].text})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'invalid JSON'}, status=400)
+    except anthropic.AuthenticationError:
+        return JsonResponse({'error': 'invalid API key'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+# ---------------------------------------------------------------------------
 # PuffyAI — EndoPath app support assistant
 # ---------------------------------------------------------------------------
 

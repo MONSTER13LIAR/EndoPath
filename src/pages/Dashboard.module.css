@@ -187,9 +187,19 @@
 .statCard::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: var(--bg, transparent);
-  opacity: 0;
+  bottom: -35px;
+  right: -35px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c, var(--primary)) 0%, transparent 70%);
+  opacity: 0.13;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.statCard:hover::before {
+  opacity: 0.22;
 }
 
 .statCard:hover {
@@ -295,6 +305,26 @@
   border: 1px solid var(--border);
   height: 100%;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow, var(--primary)) 0%, transparent 70%);
+  opacity: 0.07;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 0.13;
 }
 
 .cardHeader {

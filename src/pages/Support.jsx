@@ -45,11 +45,15 @@ export default function Support() {
                 </div>
 
                 <div className={styles.cardIcon} data-variant="ai">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <ellipse cx="16" cy="15" rx="12" ry="11"/>
+                    <ellipse cx="5.5" cy="18" rx="4" ry="3.5"/>
+                    <ellipse cx="26.5" cy="18" rx="4" ry="3.5"/>
+                    <circle cx="12" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle cx="20" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle cx="10.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                    <circle cx="21.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                    <ellipse cx="16" cy="20.5" rx="2.2" ry="1.8" strokeWidth="1.5"/>
                   </svg>
                 </div>
 

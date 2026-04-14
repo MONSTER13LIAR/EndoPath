@@ -100,9 +100,6 @@ export default function Dashboard() {
   const isDemo = !user
   const navigate = useNavigate()
 
-  const today = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  })
 
   return (
     <div className={styles.dashboardContent}>
@@ -118,7 +115,6 @@ export default function Dashboard() {
               <h1>
                 {user ? `Welcome back, ${user.name.split(' ')[0]}` : 'Welcome back'}
               </h1>
-              <p>{today}</p>
             </div>
             <div className={styles.headerRight}>
               <div className={styles.healthScore}>
@@ -208,7 +204,7 @@ export default function Dashboard() {
 
           {/* Chart */}
           <FadeIn delay={350} duration={800} distance={25}>
-            <div className={styles.card}>
+            <div className={styles.card} style={{ '--glow': '#6366F1' }}>
               <div className={styles.cardHeader}>
                 <h3>Symptom Timeline</h3>
                 <span className={styles.cardBadge}>Last 14 days</span>
@@ -242,7 +238,7 @@ export default function Dashboard() {
 
           {/* Recent Activity */}
           <FadeIn delay={450} duration={800} distance={25}>
-            <div className={styles.card}>
+            <div className={styles.card} style={{ '--glow': '#EC4899' }}>
               <div className={styles.cardHeader}>
                 <h3>Recent Activity</h3>
                 {isDemo && <span className={styles.viewAll}>View all</span>}
@@ -311,7 +307,7 @@ export default function Dashboard() {
 
           {/* Upcoming */}
           <FadeIn delay={650} duration={800} distance={25}>
-            <div className={styles.card}>
+            <div className={styles.card} style={{ '--glow': '#14B8A6' }}>
               <div className={styles.cardHeader}>
                 <h3>Upcoming</h3>
               </div>
