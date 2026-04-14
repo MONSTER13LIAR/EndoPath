@@ -1,19 +1,26 @@
 import { Link, useLocation } from 'react-router-dom'
 import styles from './Sidebar.module.css'
 
-export default function Sidebar({ isLocked, setIsLocked }) {
+export default function Sidebar({ isLocked, setIsLocked, mobileOpen, setMobileOpen }) {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className={`${styles.sidebar} ${isLocked ? styles.sidebarLocked : ''}`}>
+    <aside className={`${styles.sidebar} ${isLocked ? styles.sidebarLocked : ''} ${mobileOpen ? styles.sidebarMobileOpen : ''}`}>
       <div className={styles.sidebarHeader}>
         <div className={styles.sidebarLogo}>
           <img src="/Logo.png" alt="EndoPath Logo" className={styles.logoImg} />
           <div className={styles.logoText}>Endo<span>Path</span></div>
         </div>
-        <button 
+        <button
+          className={styles.mobileCloseBtn}
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <button
           className={`${styles.lockBtn} ${isLocked ? styles.lockBtnActive : ''}`}
           onClick={() => setIsLocked(!isLocked)}
           title={isLocked ? "Unlock Sidebar" : "Lock Sidebar"}
@@ -34,11 +41,11 @@ export default function Sidebar({ isLocked, setIsLocked }) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
           EndoAI
         </Link>
-        <Link to="#" className={styles.sideLink}>
+        <Link to="/referral-tool" className={isActive('/referral-tool') ? styles.sideLinkActive : styles.sideLink}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
           Referral Tool
         </Link>
-        <Link to="#" className={styles.sideLink}>
+        <Link to="/library" className={isActive('/library') ? styles.sideLinkActive : styles.sideLink}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
           Library
         </Link>

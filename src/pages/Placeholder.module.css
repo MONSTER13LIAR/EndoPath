@@ -84,6 +84,7 @@
   background: transparent;
   overflow: hidden;
   position: relative;
+  padding-bottom: 0.5rem;
 }
 
 .chatHeader {
@@ -200,14 +201,17 @@
 }
 
 .chatInputArea {
-  padding: 2rem 4rem;
-  border-top: 1px solid rgba(167, 139, 250, 0.1);
+  margin: 0 2rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  border-radius: 24px;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  background: rgba(10, 7, 24, 0.85);
+  background: rgba(10, 7, 24, 0.92);
   backdrop-filter: blur(30px);
   flex-shrink: 0;
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(124, 58, 237, 0.08);
 }
 
 .inputActionsLeft {
@@ -238,6 +242,17 @@
 
 .micBtn {
   border-radius: 50%;
+}
+
+.bodyBtn {
+  border-color: rgba(34, 197, 94, 0.15);
+}
+
+.bodyBtn:hover {
+  background: rgba(34, 197, 94, 0.08) !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+  color: #22c55e !important;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
 }
 
 .chatInput {
@@ -280,4 +295,102 @@
 
 .sendBtn svg {
   transform: translateX(2px);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .stagesContainerFull {
+    padding: 0.875rem 1rem 0.875rem 4rem; /* left padding clears the hamburger button */
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .stagesContainerFull::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stageCard {
+    flex: none;
+    min-width: 70px;
+    gap: 0.5rem;
+  }
+
+  .stageIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .stageCard span {
+    font-size: 0.7rem;
+  }
+
+  .stageLine {
+    top: 18px;
+  }
+
+  .chatHeader {
+    padding: 1rem 1.25rem;
+  }
+
+  .chatHeader h3 {
+    font-size: 1.05rem;
+  }
+
+  .chatMessages {
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .message {
+    max-width: 88%;
+  }
+
+  .messageBubble {
+    padding: 0.9rem 1.2rem;
+    font-size: 0.95rem;
+  }
+
+  .chatInputArea {
+    margin: 0 0.75rem calc(1rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.75rem 0.875rem;
+    gap: 0.625rem;
+    border-radius: 18px;
+  }
+
+  .actionBtn {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    flex-shrink: 0;
+  }
+
+  .chatInput {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .sendBtn {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .inputActionsLeft {
+    gap: 0.5rem;
+  }
+
+  .chatMessages {
+    padding: 1.25rem 0.875rem;
+  }
+
+  .message {
+    max-width: 93%;
+  }
 }

@@ -87,6 +87,36 @@ export default function EndoAI() {
 
           <form onSubmit={handleSend} className={aiStyles.chatInputArea}>
             <div className={aiStyles.inputActionsLeft}>
+              <button type="button" className={`${aiStyles.actionBtn} ${aiStyles.bodyBtn}`} title="Body Map">
+                <svg width="22" height="28" viewBox="0 0 22 28" fill="none" stroke="#22c55e" strokeWidth="1.4" strokeLinecap="round">
+                  {/* Head */}
+                  <ellipse cx="11" cy="3.2" rx="2.6" ry="2.6"/>
+                  {/* Neck */}
+                  <ellipse cx="11" cy="7" rx="1.2" ry="0.9"/>
+                  {/* Shoulders */}
+                  <ellipse cx="11" cy="9.5" rx="4.8" ry="1.4"/>
+                  {/* Torso */}
+                  <ellipse cx="11" cy="13" rx="3.6" ry="3.2"/>
+                  {/* Pelvis */}
+                  <ellipse cx="11" cy="17.5" rx="4" ry="1.6"/>
+                  {/* Left upper arm */}
+                  <ellipse cx="5.5" cy="11.5" rx="1.1" ry="2.6" transform="rotate(-10 5.5 11.5)"/>
+                  {/* Left lower arm */}
+                  <ellipse cx="4.2" cy="16" rx="0.9" ry="2.4" transform="rotate(8 4.2 16)"/>
+                  {/* Right upper arm */}
+                  <ellipse cx="16.5" cy="11.5" rx="1.1" ry="2.6" transform="rotate(10 16.5 11.5)"/>
+                  {/* Right lower arm */}
+                  <ellipse cx="17.8" cy="16" rx="0.9" ry="2.4" transform="rotate(-8 17.8 16)"/>
+                  {/* Left thigh */}
+                  <ellipse cx="8.8" cy="21.5" rx="1.5" ry="2.8" transform="rotate(-4 8.8 21.5)"/>
+                  {/* Left shin */}
+                  <ellipse cx="8.2" cy="26.2" rx="1.1" ry="2" transform="rotate(3 8.2 26.2)"/>
+                  {/* Right thigh */}
+                  <ellipse cx="13.2" cy="21.5" rx="1.5" ry="2.8" transform="rotate(4 13.2 21.5)"/>
+                  {/* Right shin */}
+                  <ellipse cx="13.8" cy="26.2" rx="1.1" ry="2" transform="rotate(-3 13.8 26.2)"/>
+                </svg>
+              </button>
               <button type="button" className={aiStyles.actionBtn} title="Upload Image">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
               </button>

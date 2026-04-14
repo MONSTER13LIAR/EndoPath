@@ -435,6 +435,137 @@
   transform: translateY(-2px) scale(0.98);
 }
 
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .hero {
+    padding: 5rem 1.25rem 8rem;
+  }
+
+  .heroHeadline,
+  .hero h1 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+    white-space: normal;
+    letter-spacing: -1px;
+  }
+
+  .heroSub,
+  .hero p {
+    font-size: 1rem;
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .heroCta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .heroCta .btn {
+    text-align: center;
+  }
+
+  .lg {
+    padding: 0.85rem 1.5rem;
+  }
+
+  .section {
+    padding: 3rem 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: clamp(1.8rem, 7vw, 2.4rem);
+  }
+
+  .sectionSub {
+    font-size: 1rem;
+  }
+
+  .whyGrid {
+    gap: 8vh;
+    margin-top: 3rem;
+  }
+
+  .whyCard {
+    padding: 2rem 1.5rem;
+    position: static; /* disable sticky on mobile */
+    opacity: 1;
+    transform: none !important;
+    border-radius: 20px;
+  }
+
+  .whyCard.focused {
+    transform: none !important;
+  }
+
+  .whyCard h3 {
+    font-size: 1.4rem;
+  }
+
+  .whyDesc {
+    font-size: 1rem;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .statItem {
+    padding: 0.75rem 1.5rem;
+  }
+
+  .statNum {
+    font-size: 1.5rem;
+  }
+
+  .ctaBanner {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .ctaBanner h2 {
+    font-size: clamp(2rem, 9vw, 3rem);
+    letter-spacing: -1px;
+  }
+
+  .ctaBanner p {
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .ctaBtn {
+    font-size: 1rem !important;
+    padding: 0.9rem 2rem !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .steps {
+    max-width: 100%;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 4rem 1rem 7rem;
+  }
+
+  .heroHeadline,
+  .hero h1 {
+    font-size: clamp(1.8rem, 10vw, 2.2rem);
+  }
+
+  .sectionLabel {
+    font-size: 1rem;
+  }
+
+  .whyCard {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .footer {
+    padding: 2.5rem 1rem;
+  }
+}
+
 /* ── Footer ── */
 .footer {
   position: relative;

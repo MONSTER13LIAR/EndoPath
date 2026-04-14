@@ -7,10 +7,12 @@ import AboutUs from './pages/AboutUs'
 import Features from './pages/Features'
 import Dashboard from './pages/Dashboard'
 import EndoAI from './pages/EndoAI'
+import ReferralTool from './pages/ReferralTool'
+import Library from './pages/Library'
 
 export default function App() {
   const location = useLocation()
-  const noNavbarRoutes = ['/dashboard', '/endo-ai']
+  const noNavbarRoutes = ['/dashboard', '/endo-ai', '/referral-tool', '/library']
   const showNavbar = !noNavbarRoutes.includes(location.pathname)
 
   return (
@@ -25,6 +27,8 @@ export default function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/endo-ai" element={<EndoAI />} />
+          <Route path="/referral-tool" element={<ReferralTool />} />
+          <Route path="/library" element={<Library />} />
         </Route>
       </Routes>
     </>

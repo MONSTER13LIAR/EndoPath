@@ -138,3 +138,67 @@
   color: #EF4444;
   transform: translateX(5px);
 }
+
+/* ── Mobile close button (hidden on desktop) ── */
+.mobileCloseBtn {
+  display: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mobileCloseBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* ── Mobile overrides ── */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-280px);
+    z-index: 200;
+    box-shadow: none;
+  }
+
+  /* Disable the desktop hover-to-peek on mobile */
+  .sidebar:hover {
+    transform: translateX(-280px);
+    box-shadow: none;
+    border-right-color: rgba(167, 139, 250, 0.15);
+  }
+
+  .sidebarMobileOpen {
+    transform: translateX(0) !important;
+    box-shadow: 10px 0 50px rgba(0, 0, 0, 0.6) !important;
+    border-right-color: rgba(167, 139, 250, 0.3) !important;
+  }
+
+  .mobileCloseBtn {
+    display: flex;
+  }
+
+  .lockBtn {
+    display: none;
+  }
+
+  .sidebarHeader {
+    margin-bottom: 2.5rem;
+  }
+
+  .sideLink:hover {
+    transform: none;
+  }
+
+  .logoutBtn:hover {
+    transform: none;
+  }
+}

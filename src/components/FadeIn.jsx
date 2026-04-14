@@ -13,6 +13,7 @@ export default function FadeIn({
   distance = 22,
   immediate = false,
   className = '',
+  style = {},
 }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
@@ -49,6 +50,7 @@ export default function FadeIn({
       style={{
         '--duration': `${duration}ms`,
         '--distance': `${distance}px`,
+        ...style,
       }}
     >
       {children}

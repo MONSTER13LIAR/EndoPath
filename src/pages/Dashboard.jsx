@@ -1,89 +1,275 @@
+import { Link } from 'react-router-dom'
 import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
 
+// null = demo / "try model" mode (no name shown)
+const USER_NAME = null
+
 const STATS = [
-  { label: 'Flare Risk Score', value: 'Low', color: '#10B981', trend: '-12%' },
-  { label: 'Days Logged', value: '18/21', color: '#7C3AED', trend: '+4' },
-  { label: 'Avg Pain Level', value: '2.4', color: '#F59E0B', trend: '-0.5' },
-  { label: 'Next Cycle Prediction', value: '4 days', color: '#EC4899', trend: '--' },
+  {
+    label: 'Flare Risk',
+    value: 'Low',
+    color: '#10B981',
+    bg: 'rgba(16, 185, 129, 0.08)',
+    border: 'rgba(16, 185, 129, 0.25)',
+    trend: '−12% vs last week',
+    trendPositive: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="M12 8v4l3 3"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Days Logged',
+    value: '18 / 21',
+    color: '#7C3AED',
+    bg: 'rgba(124, 58, 237, 0.08)',
+    border: 'rgba(124, 58, 237, 0.25)',
+    trend: '+4 days this month',
+    trendPositive: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Avg Pain Level',
+    value: '2.4',
+    color: '#F59E0B',
+    bg: 'rgba(245, 158, 11, 0.08)',
+    border: 'rgba(245, 158, 11, 0.25)',
+    trend: '−0.5 pts improving',
+    trendPositive: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Next Cycle',
+    value: '4 days',
+    color: '#EC4899',
+    bg: 'rgba(236, 72, 153, 0.08)',
+    border: 'rgba(236, 72, 153, 0.25)',
+    trend: 'On track',
+    trendPositive: null,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    ),
+  },
 ]
+
+const CHART_DAYS  = ['M','T','W','T','F','S','S','M','T','W','T','F','S','T']
+const CHART_DATA  = [40, 60, 30, 80, 50, 20, 15, 45, 55, 35, 25, 10, 5, 12]
 
 const RECENT_LOGS = [
-  { time: '2 hours ago', symptom: 'Mild pelvic cramping', intensity: 3 },
-  { time: 'Yesterday', symptom: 'Fatigue & lower back pain', intensity: 5 },
-  { time: '2 days ago', symptom: 'Log: Anti-inflammatory diet day', intensity: 0 },
-  { time: '3 days ago', symptom: 'Heavy flare: High intensity', intensity: 8 },
+  { time: '2 hours ago',  symptom: 'Mild pelvic cramping',         intensity: 3, icon: '🌀' },
+  { time: 'Yesterday',    symptom: 'Fatigue & lower back pain',     intensity: 5, icon: '😓' },
+  { time: '2 days ago',   symptom: 'Anti-inflammatory diet day',    intensity: 0, icon: '🥗' },
+  { time: '3 days ago',   symptom: 'Heavy flare — high intensity',  intensity: 8, icon: '🔥' },
 ]
 
+const UPCOMING = [
+  { label: 'Cycle begins',            sub: 'in 4 days',  color: '#EC4899' },
+  { label: 'Dr. Martinez appointment',sub: 'Apr 18',     color: '#7C3AED' },
+  { label: 'Weekly symptom review',   sub: 'Apr 16',     color: '#10B981' },
+]
+
+function intensityColor(n) {
+  if (n >= 70) return '#EF4444'
+  if (n >= 40) return '#F59E0B'
+  return 'rgba(167, 139, 250, 0.55)'
+}
+
+function intensityTagColor(n) {
+  if (n >= 7) return { bg: 'rgba(239,68,68,0.12)', color: '#EF4444' }
+  if (n >= 4) return { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' }
+  return { bg: 'rgba(16,185,129,0.12)', color: '#10B981' }
+}
+
 export default function Dashboard() {
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  })
+
   return (
     <div className={styles.dashboardContent}>
       <div className={styles.container}>
+
+        {/* ── Header ── */}
         <FadeIn immediate duration={800}>
-        <header className={styles.header}>
-          <div className={styles.welcome}>
-            <h1>Welcome back, Alex</h1>
-            <p>Your health metrics for April 12, 2026</p>
-          </div>
-          <button className={styles.logBtn}>+ Log Symptom</button>
-        </header>
-      </FadeIn>
-
-      <section className={styles.statsGrid}>
-        {STATS.map((s, i) => (
-          <FadeIn key={s.label} delay={i * 100} duration={700} distance={20}>
-            <div className={styles.statCard}>
-              <span className={styles.statLabel}>{s.label}</span>
-              <div className={styles.statValue} style={{ color: s.color }}>{s.value}</div>
-              <div className={styles.statTrend}>{s.trend} from last week</div>
+          <header className={styles.header}>
+            <div className={styles.welcome}>
+              <span className={styles.welcomeEyebrow}>Dashboard</span>
+              <h1>
+                {USER_NAME ? `Welcome back, ${USER_NAME}` : 'Welcome back'}
+              </h1>
+              <p>{today}</p>
             </div>
-          </FadeIn>
-        ))}
-      </section>
-
-      <div className={styles.mainGrid}>
-        <FadeIn delay={400} duration={800} distance={30} className={styles.chartArea}>
-          <div className={styles.card}>
-            <h3>Symptom Timeline (Last 14 Days)</h3>
-            <div className={styles.chartPlaceholder}>
-              <div className={styles.chartBar} style={{ height: '40%' }}></div>
-              <div className={styles.chartBar} style={{ height: '60%' }}></div>
-              <div className={styles.chartBar} style={{ height: '30%' }}></div>
-              <div className={styles.chartBar} style={{ height: '80%', background: '#EF4444' }}></div>
-              <div className={styles.chartBar} style={{ height: '50%' }}></div>
-              <div className={styles.chartBar} style={{ height: '20%' }}></div>
-              <div className={styles.chartBar} style={{ height: '15%' }}></div>
-              <div className={styles.chartBar} style={{ height: '45%' }}></div>
-              <div className={styles.chartBar} style={{ height: '55%' }}></div>
-              <div className={styles.chartBar} style={{ height: '35%' }}></div>
-              <div className={styles.chartBar} style={{ height: '25%' }}></div>
-              <div className={styles.chartBar} style={{ height: '10%' }}></div>
-              <div className={styles.chartBar} style={{ height: '5%' }}></div>
-              <div className={styles.chartBar} style={{ height: '12%' }}></div>
+            <div className={styles.headerRight}>
+              <div className={styles.healthScore}>
+                <svg className={styles.scoreRing} viewBox="0 0 44 44">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(124,58,237,0.15)" strokeWidth="4"/>
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#7C3AED"
+                    strokeWidth="4" strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 18 * 0.74} ${2 * Math.PI * 18 * 0.26}`}
+                    strokeDashoffset={2 * Math.PI * 18 * 0.25}
+                  />
+                  <text x="22" y="27" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">74</text>
+                </svg>
+                <div className={styles.healthScoreText}>
+                  <span className={styles.healthScoreLabel}>Health Score</span>
+                  <span className={styles.healthScoreSub}>Good standing</span>
+                </div>
+              </div>
+              <button className={styles.logBtn}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Log Symptom
+              </button>
             </div>
-          </div>
+          </header>
         </FadeIn>
 
-        <FadeIn delay={500} duration={800} distance={30}>
-          <div className={styles.card}>
-            <h3>Recent Activity</h3>
-            <div className={styles.activityList}>
-              {RECENT_LOGS.map((log, i) => (
-                <div key={i} className={styles.activityItem}>
-                  <div className={styles.activityInfo}>
-                    <strong>{log.symptom}</strong>
-                    <span>{log.time}</span>
-                  </div>
-                  {log.intensity > 0 && (
-                    <div className={styles.intensityTag}>
-                      Lvl {log.intensity}
+        {/* ── Stat Cards ── */}
+        <section className={styles.statsGrid}>
+          {STATS.map((s, i) => (
+            <FadeIn key={s.label} delay={i * 80} duration={700} distance={20}>
+              <div
+                className={styles.statCard}
+                style={{ '--c': s.color, '--bg': s.bg, '--bdr': s.border }}
+              >
+                <div className={styles.statTop}>
+                  <div className={styles.statIconWrap}>{s.icon}</div>
+                  {s.trendPositive !== null && (
+                    <div className={`${styles.trendBadge} ${s.trendPositive ? styles.trendUp : styles.trendDown}`}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        {s.trendPositive
+                          ? <polyline points="18 15 12 9 6 15"/>
+                          : <polyline points="6 9 12 15 18 9"/>}
+                      </svg>
                     </div>
                   )}
                 </div>
-              ))}
+                <div className={styles.statValue}>{s.value}</div>
+                <div className={styles.statLabel}>{s.label}</div>
+                <div className={styles.statTrend}>{s.trend}</div>
+              </div>
+            </FadeIn>
+          ))}
+        </section>
+
+        {/* ── Main Grid ── */}
+        <div className={styles.mainGrid}>
+
+          {/* Chart */}
+          <FadeIn delay={350} duration={800} distance={25}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3>Symptom Timeline</h3>
+                <span className={styles.cardBadge}>Last 14 days</span>
+              </div>
+              <div className={styles.chartPlaceholder}>
+                {CHART_DATA.map((h, i) => (
+                  <div key={i} className={styles.chartBarWrap}>
+                    <div
+                      className={styles.chartBar}
+                      style={{ height: `${h}%`, background: intensityColor(h) }}
+                    />
+                    <span className={styles.chartDay}>{CHART_DAYS[i]}</span>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.chartLegend}>
+                <span style={{ color: '#EF4444' }}>● High</span>
+                <span style={{ color: '#F59E0B' }}>● Medium</span>
+                <span style={{ color: 'rgba(167,139,250,0.8)' }}>● Low</span>
+              </div>
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+
+          {/* Recent Activity */}
+          <FadeIn delay={450} duration={800} distance={25}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3>Recent Activity</h3>
+                <span className={styles.viewAll}>View all</span>
+              </div>
+              <div className={styles.activityList}>
+                {RECENT_LOGS.map((log, i) => {
+                  const tc = intensityTagColor(log.intensity)
+                  return (
+                    <div key={i} className={styles.activityItem}>
+                      <div className={styles.activityEmoji}>{log.icon}</div>
+                      <div className={styles.activityInfo}>
+                        <strong>{log.symptom}</strong>
+                        <span>{log.time}</span>
+                      </div>
+                      {log.intensity > 0 && (
+                        <div className={styles.intensityTag} style={{ background: tc.bg, color: tc.color }}>
+                          Lvl {log.intensity}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+
+        {/* ── Bottom Row ── */}
+        <div className={styles.bottomGrid}>
+
+          {/* AI Insight */}
+          <FadeIn delay={550} duration={800} distance={25}>
+            <div className={styles.insightCard}>
+              <div className={styles.insightIcon}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                  <path d="M19 3v4"/><path d="M21 5h-4"/>
+                </svg>
+              </div>
+              <div className={styles.insightBody}>
+                <span className={styles.insightLabel}>EndoAI Insight</span>
+                <p>Your flare risk has dropped 12% this week. Continuing your anti-inflammatory diet and low-impact movement is making a measurable difference.</p>
+                <Link to="/endo-ai" className={styles.insightLink}>
+                  Chat with EndoAI
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </Link>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* Upcoming */}
+          <FadeIn delay={650} duration={800} distance={25}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3>Upcoming</h3>
+              </div>
+              <div className={styles.upcomingList}>
+                {UPCOMING.map((u, i) => (
+                  <div key={i} className={styles.upcomingItem}>
+                    <div className={styles.upcomingDot} style={{ background: u.color, boxShadow: `0 0 8px ${u.color}` }} />
+                    <div className={styles.upcomingInfo}>
+                      <strong>{u.label}</strong>
+                      <span>{u.sub}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+
+        </div>
       </div>
     </div>
   )
