@@ -9,10 +9,12 @@ import Dashboard from './pages/Dashboard'
 import EndoAI from './pages/EndoAI'
 import ReferralTool from './pages/ReferralTool'
 import Library from './pages/Library'
+import Support from './pages/Support'
+import PuffyAI from './pages/PuffyAI'
 
 export default function App() {
   const location = useLocation()
-  const noNavbarRoutes = ['/dashboard', '/endo-ai', '/referral-tool', '/library']
+  const noNavbarRoutes = ['/dashboard', '/endo-ai', '/referral-tool', '/library', '/support', '/puffy-ai']
   const showNavbar = !noNavbarRoutes.includes(location.pathname)
 
   return (
@@ -29,6 +31,8 @@ export default function App() {
           <Route path="/endo-ai" element={<EndoAI />} />
           <Route path="/referral-tool" element={<ReferralTool />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/puffy-ai" element={<PuffyAI />} />
         </Route>
       </Routes>
     </>

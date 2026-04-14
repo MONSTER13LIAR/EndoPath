@@ -1,0 +1,109 @@
+/* ── Top bar (replaces stages tracker) ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 2.5rem;
+  background: rgba(10, 7, 24, 0.6);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+/* Back button */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.backBtn:hover { color: var(--text); }
+
+/* Identity center */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35);
+}
+
+.identityText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.identityName {
+  font-size: 1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.2px;
+}
+
+.identityRole {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.statusBadgeWrap {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 80px;
+}
+
+/* Small avatar shown beside AI messages */
+.aiAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  align-self: flex-end;
+  margin-right: 0.5rem;
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
+}
+
+/* Override AI bubble colour for PuffyAI (cyan instead of purple) */
+:global(.ai) .aiAvatar ~ :global(.messageBubble) {
+  border-color: rgba(6, 182, 212, 0.15);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .topBar {
+    padding: 0.875rem 1rem 0.875rem 4rem;
+  }
+
+  .identityRole {
+    display: none;
+  }
+}
