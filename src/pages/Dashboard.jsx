@@ -17,75 +17,74 @@ const RECENT_LOGS = [
 
 export default function Dashboard() {
   return (
-    <main className={styles.dashboard}>
+    <div className={styles.dashboardContent}>
       <div className={styles.container}>
         <FadeIn immediate duration={800}>
-          <header className={styles.header}>
-            <div className={styles.welcome}>
-              <h1>Welcome back, Alex</h1>
-              <p>Your health metrics for April 12, 2026</p>
+        <header className={styles.header}>
+          <div className={styles.welcome}>
+            <h1>Welcome back, Alex</h1>
+            <p>Your health metrics for April 12, 2026</p>
+          </div>
+          <button className={styles.logBtn}>+ Log Symptom</button>
+        </header>
+      </FadeIn>
+
+      <section className={styles.statsGrid}>
+        {STATS.map((s, i) => (
+          <FadeIn key={s.label} delay={i * 100} duration={700} distance={20}>
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>{s.label}</span>
+              <div className={styles.statValue} style={{ color: s.color }}>{s.value}</div>
+              <div className={styles.statTrend}>{s.trend} from last week</div>
             </div>
-            <button className={styles.logBtn}>+ Log Symptom</button>
-          </header>
+          </FadeIn>
+        ))}
+      </section>
+
+      <div className={styles.mainGrid}>
+        <FadeIn delay={400} duration={800} distance={30} className={styles.chartArea}>
+          <div className={styles.card}>
+            <h3>Symptom Timeline (Last 14 Days)</h3>
+            <div className={styles.chartPlaceholder}>
+              <div className={styles.chartBar} style={{ height: '40%' }}></div>
+              <div className={styles.chartBar} style={{ height: '60%' }}></div>
+              <div className={styles.chartBar} style={{ height: '30%' }}></div>
+              <div className={styles.chartBar} style={{ height: '80%', background: '#EF4444' }}></div>
+              <div className={styles.chartBar} style={{ height: '50%' }}></div>
+              <div className={styles.chartBar} style={{ height: '20%' }}></div>
+              <div className={styles.chartBar} style={{ height: '15%' }}></div>
+              <div className={styles.chartBar} style={{ height: '45%' }}></div>
+              <div className={styles.chartBar} style={{ height: '55%' }}></div>
+              <div className={styles.chartBar} style={{ height: '35%' }}></div>
+              <div className={styles.chartBar} style={{ height: '25%' }}></div>
+              <div className={styles.chartBar} style={{ height: '10%' }}></div>
+              <div className={styles.chartBar} style={{ height: '5%' }}></div>
+              <div className={styles.chartBar} style={{ height: '12%' }}></div>
+            </div>
+          </div>
         </FadeIn>
 
-        <section className={styles.statsGrid}>
-          {STATS.map((s, i) => (
-            <FadeIn key={s.label} delay={i * 100} duration={700} distance={20}>
-              <div className={styles.statCard}>
-                <span className={styles.statLabel}>{s.label}</span>
-                <div className={styles.statValue} style={{ color: s.color }}>{s.value}</div>
-                <div className={styles.statTrend}>{s.trend} from last week</div>
-              </div>
-            </FadeIn>
-          ))}
-        </section>
-
-        <div className={styles.mainGrid}>
-          <FadeIn delay={400} duration={800} distance={30} className={styles.chartArea}>
-            <div className={styles.card}>
-              <h3>Symptom Timeline (Last 14 Days)</h3>
-              <div className={styles.chartPlaceholder}>
-                <div className={styles.chartBar} style={{ height: '40%' }}></div>
-                <div className={styles.chartBar} style={{ height: '60%' }}></div>
-                <div className={styles.chartBar} style={{ height: '30%' }}></div>
-                <div className={styles.chartBar} style={{ height: '80%', background: '#EF4444' }}></div>
-                <div className={styles.chartBar} style={{ height: '50%' }}></div>
-                <div className={styles.chartBar} style={{ height: '20%' }}></div>
-                <div className={styles.chartBar} style={{ height: '15%' }}></div>
-                <div className={styles.chartBar} style={{ height: '45%' }}></div>
-                <div className={styles.chartBar} style={{ height: '55%' }}></div>
-                <div className={styles.chartBar} style={{ height: '35%' }}></div>
-                <div className={styles.chartBar} style={{ height: '25%' }}></div>
-                <div className={styles.chartBar} style={{ height: '10%' }}></div>
-                <div className={styles.chartBar} style={{ height: '5%' }}></div>
-                <div className={styles.chartBar} style={{ height: '12%' }}></div>
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={500} duration={800} distance={30}>
-            <div className={styles.card}>
-              <h3>Recent Activity</h3>
-              <div className={styles.activityList}>
-                {RECENT_LOGS.map((log, i) => (
-                  <div key={i} className={styles.activityItem}>
-                    <div className={styles.activityInfo}>
-                      <strong>{log.symptom}</strong>
-                      <span>{log.time}</span>
-                    </div>
-                    {log.intensity > 0 && (
-                      <div className={styles.intensityTag}>
-                        Lvl {log.intensity}
-                      </div>
-                    )}
+        <FadeIn delay={500} duration={800} distance={30}>
+          <div className={styles.card}>
+            <h3>Recent Activity</h3>
+            <div className={styles.activityList}>
+              {RECENT_LOGS.map((log, i) => (
+                <div key={i} className={styles.activityItem}>
+                  <div className={styles.activityInfo}>
+                    <strong>{log.symptom}</strong>
+                    <span>{log.time}</span>
                   </div>
-                ))}
-              </div>
+                  {log.intensity > 0 && (
+                    <div className={styles.intensityTag}>
+                      Lvl {log.intensity}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          </FadeIn>
-        </div>
+          </div>
+        </FadeIn>
       </div>
-    </main>
+    </div>
   )
 }

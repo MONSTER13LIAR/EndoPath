@@ -240,6 +240,32 @@
   width: 100%;
   opacity: 0.4;
   transform: scale(0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: visible; /* Important: show the glow outside bounds if needed */
+}
+
+/* Background glow */
+.whyCard::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translate(-50%, -50%) scale(0.6);
+  background: radial-gradient(
+    circle at center,
+    var(--card-glow) 0%,
+    rgba(124, 58, 237, 0.1) 40%,
+    transparent 75%
+  );
+  filter: blur(80px);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
 }
 
 .whyCard.focused {
@@ -247,32 +273,57 @@
   transform: scale(1.05);
   border-color: var(--primary);
   box-shadow: 
-    0 20px 60px -10px rgba(124, 58, 237, 0.3),
-    0 0 20px rgba(124, 58, 237, 0.1);
+    0 20px 80px -10px rgba(0, 0, 0, 0.4),
+    0 0 30px 2px var(--card-glow); /* Outer edge glow */
   z-index: 2;
+}
+
+.whyCard.focused::before {
+  opacity: 0.8;
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 .whyCard:hover {
   border-color: var(--primary);
 }
 
-.whyIcon {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  display: inline-block;
-}
-
 .whyCard h3 {
-  font-size: 1.35rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--text);
+  letter-spacing: -0.5px;
 }
 
-.whyCard p {
-  font-size: 1rem;
+.whyDesc {
+  font-size: 1.15rem;
   color: var(--muted);
   line-height: 1.65;
+  margin-bottom: 2.5rem;
+  max-width: 90%;
+}
+
+.quoteWrapper {
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  margin-top: auto;
+}
+
+.quoteText {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--primary);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.quoteAuthor {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
 }
 
 /* ── Steps ── */
@@ -334,8 +385,8 @@
   height: 150%;
   background: radial-gradient(
     circle at center,
-    rgba(255, 105, 180, 0.45) 0%,   /* Much brighter HotPink center */
-    rgba(255, 182, 193, 0.25) 35%,  /* Softer pink outer */
+    rgba(157, 23, 77, 0.4) 0%,   /* Darker, deeper pink (Rose-900ish) */
+    rgba(88, 28, 135, 0.2) 35%,  /* Deep purple transition */
     transparent 80%
   );
   filter: blur(80px);

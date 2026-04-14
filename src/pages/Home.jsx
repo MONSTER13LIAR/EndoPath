@@ -5,12 +5,48 @@ import AnimatedHeadline from '../components/AnimatedHeadline'
 import FadeIn from '../components/FadeIn'
 
 const WHY_CARDS = [
-  { icon: '📊', title: 'Pattern Recognition',   desc: 'Log symptoms daily and let EndoPath surface trends your doctor can act on.' },
-  { icon: '🔒', title: 'Private & Secure',       desc: 'Your data is encrypted and never sold. You choose what to share and with whom.' },
-  { icon: '🩺', title: 'Doctor-Ready Reports',   desc: 'Generate clear, exportable summaries that speak your care team\'s language.' },
-  { icon: '🌙', title: 'Cycle & Pain Tracking',  desc: 'Track your cycle, pain levels, mood, and triggers in under 60 seconds a day.' },
-  { icon: '💬', title: 'Community Support',      desc: 'Connect with others on the same journey in a safe, moderated space.' },
-  { icon: '📅', title: 'Appointment Prep',       desc: 'Never forget your symptoms before an appointment — EndoPath remembers.' },
+  { 
+    title: 'Pattern Recognition',   
+    desc: 'Log symptoms daily and let EndoPath surface trends your doctor can act on.',
+    quote: "Data is the most powerful tool in your medical journey.",
+    author: "Dr. Sarah Chen, Endometriosis Specialist",
+    glow: "rgba(255, 105, 180, 0.6)"
+  },
+  { 
+    title: 'Private & Secure',       
+    desc: 'Your data is encrypted and never sold. You choose what to share and with whom.',
+    quote: "Privacy is not a luxury, it's a fundamental patient right.",
+    author: "Security First Initiative",
+    glow: "rgba(124, 58, 237, 0.6)"
+  },
+  { 
+    title: 'Doctor-Ready Reports',   
+    desc: 'Generate clear, exportable summaries that speak your care team\'s language.',
+    quote: "Effective communication between patients and doctors saves lives.",
+    author: "Health Communication Board",
+    glow: "rgba(34, 211, 238, 0.5)"
+  },
+  { 
+    title: 'Cycle & Pain Tracking',  
+    desc: 'Track your cycle, pain levels, mood, and triggers in under 60 seconds a day.',
+    quote: "Understanding your body's rhythm is the first step toward management.",
+    author: "Patient Advocacy Group",
+    glow: "rgba(251, 113, 133, 0.6)"
+  },
+  { 
+    title: 'Community Support',      
+    desc: 'Connect with others on the same journey in a safe, moderated space.',
+    quote: "In chronic illness, connection is a form of healing.",
+    author: "Global Endo Network",
+    glow: "rgba(192, 38, 211, 0.6)"
+  },
+  { 
+    title: 'Appointment Prep',       
+    desc: 'Never forget your symptoms before an appointment — EndoPath remembers.',
+    quote: "Preparation is the key to advocacy in healthcare.",
+    author: "Patient Empowerment Council",
+    glow: "rgba(255, 182, 193, 0.5)"
+  },
 ]
 
 function WhyCard({ card }) {
@@ -40,10 +76,19 @@ function WhyCard({ card }) {
     <div
       ref={ref}
       className={`${styles.whyCard} ${isFocused ? styles.focused : ''}`}
+      style={{ '--card-glow': card.glow }}
     >
-      <div className={styles.whyIcon}>{card.icon}</div>
-      <h3>{card.title}</h3>
-      <p>{card.desc}</p>
+      <div className={styles.whyCardContent}>
+        <h3>{card.title}</h3>
+        <p className={styles.whyDesc}>{card.desc}</p>
+        
+        <div className={styles.quoteWrapper}>
+          <blockquote className={styles.quoteText}>
+            "{card.quote}"
+          </blockquote>
+          <cite className={styles.quoteAuthor}>— {card.author}</cite>
+        </div>
+      </div>
     </div>
   )
 }
@@ -142,7 +187,7 @@ export default function Home() {
             <div className={styles.ctaBanner}>
               <h2>Predict to Recover</h2>
               <p>Your full journey : Start now</p>
-              <a href="/dashboard" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
+              <a href="#" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
                 Get Started
               </a>
             </div>
