@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import aiStyles from './Placeholder.module.css'
 import FadeIn from '../components/FadeIn'
@@ -19,6 +19,7 @@ export default function EndoAI() {
     { role: 'ai', content: "Hello Alex. I'm EndoAI, your personalized health assistant. I've unlocked the 'Predict' stage based on your recent data. How can I help you prepare for your next cycle?" }
   ])
   const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
   const chatEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -29,21 +30,32 @@ export default function EndoAI() {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim() || loading) return
 
     const userMsg = { role: 'user', content: input }
-    setMessages(prev => [...prev, userMsg])
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
     setInput('')
+    setLoading(true)
 
-    // Mock AI response
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        content: "I'm analyzing that for you. Based on the 'Predict' stage metrics, we should keep an eye on your activity levels today." 
-      }])
-    }, 1000)
+    try {
+      const res = await fetch('http://localhost:8000/api/endoai/chat/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          stage: STAGES.find(s => !s.locked)?.id ?? 'predict',
+        }),
+      })
+      const data = await res.json()
+      setMessages(prev => [...prev, { role: 'ai', content: data.content ?? data.error ?? 'Something went wrong.' }])
+    } catch {
+      setMessages(prev => [...prev, { role: 'ai', content: 'Could not reach the server. Please try again.' }])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -131,8 +143,11 @@ export default function EndoAI() {
               placeholder="Ask EndoAI anything about your health..."
               className={aiStyles.chatInput}
             />
-            <button type="submit" className={aiStyles.sendBtn}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <button type="submit" className={aiStyles.sendBtn} disabled={loading}>
+              {loading
+                ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{animation:'spin 1s linear infinite'}}><circle cx="12" cy="12" r="10" strokeDasharray="31.4" strokeDashoffset="10"/></svg>
+                : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              }
             </button>
           </form>
         </div>

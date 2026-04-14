@@ -1,0 +1,4 @@
+django>=5.0
+django-cors-headers>=4.3
+anthropic>=0.90
+python-dotenv>=1.0
