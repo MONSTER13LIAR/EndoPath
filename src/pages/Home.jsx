@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Spline from '@splinetool/react-spline'
 import styles from './Home.module.css'
 import AnimatedHeadline from '../components/AnimatedHeadline'
 import FadeIn from '../components/FadeIn'
@@ -144,8 +145,11 @@ export default function Home() {
           </div>
         </FadeIn>
 
-        {/* ── Stats carousel — pinned to bottom of viewport ── */}
-        <FadeIn immediate delay={1500} duration={1000} distance={12} className={styles.statsAnchor}>
+      </section>
+
+      {/* ── Stats carousel — sits above Why section ── */}
+      <div className={styles.statsAnchor}>
+        <FadeIn immediate delay={1000} duration={1000} distance={12}>
           <div className={styles.statsCarousel}>
             {/* duplicate items for seamless infinite loop */}
             <div className={styles.statsTrack}>
@@ -158,7 +162,7 @@ export default function Home() {
             </div>
           </div>
         </FadeIn>
-      </section>
+      </div>
 
       {/* ── Why Endo Path ── */}
       <section className={styles.section}>
@@ -185,11 +189,16 @@ export default function Home() {
         <div className={styles.container}>
           <FadeIn duration={800} distance={28}>
             <div className={styles.ctaBanner}>
-              <h2>Predict to Recover</h2>
-              <p>Your full journey : Start now</p>
-              <a href="#" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
-                Get Started
-              </a>
+              <div className={styles.ctaSpline} aria-hidden="true">
+                <Spline scene="https://prod.spline.design/Z3tsDJeXe2nxnFWy/scene.splinecode" />
+              </div>
+              <div className={styles.ctaContent}>
+                <h2>Predict to Recover</h2>
+                <p>Your full journey : Start now</p>
+                <a href="#" className={`${styles.btn} ${styles.ctaBtn} ${styles.lg}`}>
+                  Get Started
+                </a>
+              </div>
             </div>
           </FadeIn>
         </div>

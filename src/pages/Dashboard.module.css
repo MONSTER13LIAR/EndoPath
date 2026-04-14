@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
   min-height: 100vh;
-  background: var(--bg);
+  background: transparent; /* let GridBackground show through */
   overflow: hidden;
   position: relative;
 }
@@ -23,8 +23,27 @@
   padding: 3.5rem 0 4rem;
   height: 100%;
   overflow-y: auto;
+  position: relative; /* stacking context for the grid overlay */
   scrollbar-width: thin;
   scrollbar-color: rgba(167, 139, 250, 0.2) transparent;
+}
+
+/* Moving grid — same animation as landing page GridBackground */
+.dashboardGrid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, rgba(124, 58, 237, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  animation: dashGridFlow 6s linear infinite;
+}
+
+@keyframes dashGridFlow {
+  from { background-position: 0 0; }
+  to   { background-position: 56px 0; }
 }
 
 .dashboardContent::-webkit-scrollbar { width: 5px; }
@@ -37,6 +56,8 @@
   max-width: 1140px;
   margin: 0 auto;
   padding: 0 3rem;
+  position: relative;
+  z-index: 1; /* sits above the grid overlay */
 }
 
 /* ── Header ── */
@@ -548,6 +569,122 @@
 .upcomingInfo span {
   font-size: 0.72rem;
   color: var(--muted);
+}
+
+/* ── Demo blur ── */
+.blurred {
+  filter: blur(6px);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Signup overlay ── */
+.signupOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  /* sits over the blurred content */
+  pointer-events: none;
+}
+
+.signupCard {
+  pointer-events: all;
+  background: rgba(13, 10, 30, 0.92);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  border-radius: 28px;
+  padding: 2.5rem 2.75rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(124, 58, 237, 0.1),
+    0 0 60px rgba(124, 58, 237, 0.12);
+}
+
+.signupIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(192, 38, 211, 0.1));
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A78BFA;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+}
+
+.signupCard h2 {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.signupCard p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 2rem;
+  max-width: 360px;
+}
+
+.signupActions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.signupBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #7C3AED 0%, #C026D3 100%);
+  color: #fff;
+  padding: 0.85rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+}
+
+.signupBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.5);
+}
+
+.signupGhost {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.85rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.signupGhost:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
 }
 
 /* ── Hamburger (mobile only) ── */

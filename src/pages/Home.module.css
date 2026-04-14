@@ -1,14 +1,29 @@
 /* ── Hero ── */
 .hero {
-  min-height: 100vh;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 7rem 1.5rem 4rem;
+  padding: 8rem 1.5rem 2rem;
   position: relative;
   overflow: hidden;
+}
+
+/* ── Spline 3D background ── */
+.splineBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* hero text and buttons remain clickable */
+  overflow: hidden;
+}
+
+.splineBg canvas {
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0.75;
 }
 
 .hero::before {
@@ -23,6 +38,11 @@
   pointer-events: none;
 }
 
+
+.hero > *:not(.splineBg) {
+  position: relative;
+  z-index: 1;
+}
 
 .hero h1,
 .heroHeadline {
@@ -104,19 +124,19 @@
 
 .ghost:hover { background: var(--card); }
 
-/* anchors the FadeIn wrapper to hero bottom */
+/* anchors the stats carousel to the bottom of the hero viewport */
+/* sits after hero, before Why section */
 .statsAnchor {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
+  position: relative;
   display: flex;
   justify-content: center;
+  z-index: 10;
+  padding: 1rem 0 4rem;
 }
 
 /* ── Stats Carousel ── */
 .statsCarousel {
-  width: 100%;
+  width: 100vw;
   max-width: 860px;
   overflow: hidden;
   /* fade edges to transparent */
@@ -368,10 +388,42 @@
 /* ── CTA Banner ── */
 .ctaBanner {
   position: relative;
-  padding: 2rem 2rem 8rem;
-  text-align: center;
-  max-width: 900px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 1100px;
   margin: 0 auto;
+  min-height: 480px;
+  overflow: hidden;
+  border-radius: 32px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(10, 7, 24, 0.5);
+}
+
+/* Spline column */
+.ctaSpline {
+  flex: 0 0 50%;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ctaSpline canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Text + CTA column */
+.ctaContent {
+  flex: 1;
+  padding: 3.5rem 3.5rem 3.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  position: relative;
+  z-index: 1;
 }
 
 /* The pink light glow */
@@ -394,18 +446,19 @@
   pointer-events: none;
 }
 
-.ctaBanner h2 {
-  font-size: clamp(3rem, 8vw, 5rem);
+.ctaContent h2 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 900;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   color: var(--text);
-  letter-spacing: -2px;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
 }
 
-.ctaBanner p {
+.ctaContent p {
   color: var(--muted);
-  margin-bottom: 4rem;
-  font-size: 1.6rem;
+  margin-bottom: 2.5rem;
+  font-size: 1.2rem;
   font-weight: 400;
 }
 
@@ -517,17 +570,31 @@
   }
 
   .ctaBanner {
-    padding: 2rem 1.25rem 4rem;
+    flex-direction: column;
+    min-height: unset;
+    border-radius: 20px;
   }
 
-  .ctaBanner h2 {
-    font-size: clamp(2rem, 9vw, 3rem);
+  .ctaSpline {
+    flex: none;
+    width: 100%;
+    height: 280px;
+  }
+
+  .ctaContent {
+    padding: 2rem 1.5rem 2.5rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ctaContent h2 {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
     letter-spacing: -1px;
   }
 
-  .ctaBanner p {
-    font-size: 1.1rem;
-    margin-bottom: 2.5rem;
+  .ctaContent p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .ctaBtn {

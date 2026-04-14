@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
+import FlowingParticles from '../components/FlowingParticles'
 
 // null = demo / "try model" mode (no name shown)
 const USER_NAME = null
@@ -103,6 +104,8 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboardContent}>
+      <FlowingParticles />
+      <div className={styles.dashboardGrid} aria-hidden="true" />
       <div className={styles.container}>
 
         {/* ── Header ── */}
@@ -139,8 +142,31 @@ export default function Dashboard() {
           </header>
         </FadeIn>
 
+        {/* ── Demo blur + signup overlay ── */}
+        {USER_NAME === null && (
+          <div className={styles.signupOverlay}>
+            <div className={styles.signupCard}>
+              <div className={styles.signupIcon}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <h2>Sign up to reveal your dashboard</h2>
+              <p>
+                You're viewing a demo. Create a free account to unlock your real
+                health data, cycle predictions, and personalised EndoAI insights.
+              </p>
+              <div className={styles.signupActions}>
+                <Link to="/" className={styles.signupBtn}>Create free account</Link>
+                <Link to="/" className={styles.signupGhost}>Learn more</Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Stat Cards ── */}
-        <section className={styles.statsGrid}>
+        <section className={`${styles.statsGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
           {STATS.map((s, i) => (
             <FadeIn key={s.label} delay={i * 80} duration={700} distance={20}>
               <div
@@ -168,7 +194,7 @@ export default function Dashboard() {
         </section>
 
         {/* ── Main Grid ── */}
-        <div className={styles.mainGrid}>
+        <div className={`${styles.mainGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
 
           {/* Chart */}
           <FadeIn delay={350} duration={800} distance={25}>
@@ -227,7 +253,7 @@ export default function Dashboard() {
         </div>
 
         {/* ── Bottom Row ── */}
-        <div className={styles.bottomGrid}>
+        <div className={`${styles.bottomGrid} ${USER_NAME === null ? styles.blurred : ''}`}>
 
           {/* AI Insight */}
           <FadeIn delay={550} duration={800} distance={25}>
