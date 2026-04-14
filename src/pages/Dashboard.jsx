@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
@@ -98,6 +98,7 @@ function intensityTagColor(n) {
 export default function Dashboard() {
   const { user } = useAuth()
   const isDemo = !user
+  const navigate = useNavigate()
 
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -139,7 +140,7 @@ export default function Dashboard() {
                   <span className={styles.healthScoreSub}>{isDemo ? 'Good standing' : 'No data yet'}</span>
                 </div>
               </div>
-              <button className={styles.logBtn}>
+              <button className={styles.logBtn} onClick={() => navigate('/endo-ai')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Log Symptom
               </button>
@@ -212,22 +213,30 @@ export default function Dashboard() {
                 <h3>Symptom Timeline</h3>
                 <span className={styles.cardBadge}>Last 14 days</span>
               </div>
-              <div className={styles.chartPlaceholder}>
-                {CHART_DATA.map((h, i) => (
-                  <div key={i} className={styles.chartBarWrap}>
-                    <div
-                      className={styles.chartBar}
-                      style={{ height: `${h}%`, background: intensityColor(h) }}
-                    />
-                    <span className={styles.chartDay}>{CHART_DAYS[i]}</span>
+              {isDemo ? (
+                <>
+                  <div className={styles.chartPlaceholder}>
+                    {CHART_DATA.map((h, i) => (
+                      <div key={i} className={styles.chartBarWrap}>
+                        <div className={styles.chartBar} style={{ height: `${h}%`, background: intensityColor(h) }} />
+                        <span className={styles.chartDay}>{CHART_DAYS[i]}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className={styles.chartLegend}>
-                <span style={{ color: '#EF4444' }}>● High</span>
-                <span style={{ color: '#F59E0B' }}>● Medium</span>
-                <span style={{ color: 'rgba(167,139,250,0.8)' }}>● Low</span>
-              </div>
+                  <div className={styles.chartLegend}>
+                    <span style={{ color: '#EF4444' }}>● High</span>
+                    <span style={{ color: '#F59E0B' }}>● Medium</span>
+                    <span style={{ color: 'rgba(167,139,250,0.8)' }}>● Low</span>
+                  </div>
+                </>
+              ) : (
+                <div className={styles.emptyState} style={{ minHeight: '160px' }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                  </svg>
+                  <p>No timeline data yet.<br/>Start logging to see your symptom patterns.</p>
+                </div>
+              )}
             </div>
           </FadeIn>
 
@@ -287,7 +296,11 @@ export default function Dashboard() {
               </div>
               <div className={styles.insightBody}>
                 <span className={styles.insightLabel}>EndoAI Insight</span>
-                <p>Your flare risk has dropped 12% this week. Continuing your anti-inflammatory diet and low-impact movement is making a measurable difference.</p>
+                {isDemo ? (
+                  <p>Your flare risk has dropped 12% this week. Continuing your anti-inflammatory diet and low-impact movement is making a measurable difference.</p>
+                ) : (
+                  <p style={{ opacity: 0.5 }}>No insights yet — EndoAI needs a few logs to start recognising your patterns.</p>
+                )}
                 <Link to="/endo-ai" className={styles.insightLink}>
                   Chat with EndoAI
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -302,17 +315,28 @@ export default function Dashboard() {
               <div className={styles.cardHeader}>
                 <h3>Upcoming</h3>
               </div>
-              <div className={styles.upcomingList}>
-                {UPCOMING.map((u, i) => (
-                  <div key={i} className={styles.upcomingItem}>
-                    <div className={styles.upcomingDot} style={{ background: u.color, boxShadow: `0 0 8px ${u.color}` }} />
-                    <div className={styles.upcomingInfo}>
-                      <strong>{u.label}</strong>
-                      <span>{u.sub}</span>
+              {isDemo ? (
+                <div className={styles.upcomingList}>
+                  {UPCOMING.map((u, i) => (
+                    <div key={i} className={styles.upcomingItem}>
+                      <div className={styles.upcomingDot} style={{ background: u.color, boxShadow: `0 0 8px ${u.color}` }} />
+                      <div className={styles.upcomingInfo}>
+                        <strong>{u.label}</strong>
+                        <span>{u.sub}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.emptyState}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <p>Nothing scheduled yet.</p>
+                </div>
+              )}
             </div>
           </FadeIn>
 

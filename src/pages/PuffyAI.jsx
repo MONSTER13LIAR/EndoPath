@@ -62,11 +62,21 @@ export default function PuffyAI() {
 
           <div className={styles.identity}>
             <div className={styles.avatar}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9" y1="9" x2="9.01" y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                {/* Puffy wide head */}
+                <ellipse cx="16" cy="15" rx="12" ry="11"/>
+                {/* Left puffed cheek */}
+                <ellipse cx="5.5" cy="18" rx="4" ry="3.5"/>
+                {/* Right puffed cheek */}
+                <ellipse cx="26.5" cy="18" rx="4" ry="3.5"/>
+                {/* Eyes */}
+                <circle cx="12" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                <circle cx="20" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                {/* Rosy blush */}
+                <circle cx="10.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                <circle cx="21.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                {/* Puckered puffing mouth */}
+                <ellipse cx="16" cy="20.5" rx="2.2" ry="1.8" strokeWidth="1.5"/>
               </svg>
             </div>
             <div className={styles.identityText}>
@@ -87,11 +97,15 @@ export default function PuffyAI() {
               <div key={i} className={`${aiStyles.message} ${aiStyles[m.role]}`}>
                 {m.role === 'ai' && (
                   <div className={styles.aiAvatar}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                      <line x1="9" y1="9" x2="9.01" y2="9"/>
-                      <line x1="15" y1="9" x2="15.01" y2="9"/>
+                    <svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <ellipse cx="16" cy="15" rx="12" ry="11"/>
+                      <ellipse cx="5.5" cy="18" rx="4" ry="3.5"/>
+                      <ellipse cx="26.5" cy="18" rx="4" ry="3.5"/>
+                      <circle cx="12" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                      <circle cx="20" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                      <circle cx="10.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                      <circle cx="21.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                      <ellipse cx="16" cy="20.5" rx="2.2" ry="1.8" strokeWidth="1.5"/>
                     </svg>
                   </div>
                 )}
