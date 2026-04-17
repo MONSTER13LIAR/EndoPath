@@ -4,15 +4,30 @@ import aiStyles from './Placeholder.module.css'
 import styles from './PuffyAI.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
+import { useAuth } from '../context/AuthContext'
+import { useChat } from '../context/ChatContext'
 
 export default function PuffyAI() {
   const { isLocked } = useOutletContext()
-  const [messages, setMessages] = useState([
-    {
-      role: 'ai',
-      content: "Hi there! I'm PuffyAI, your EndoPath support assistant. I'm here to help with anything about the app — features, account questions, how things work, or anything else. What can I help you with today?",
-    },
-  ])
+  const { user } = useAuth()
+  const { puffyMessages, setPuffyMessages } = useChat()
+  
+  const [messages, setMessages] = useState(() => {
+    if (puffyMessages) return puffyMessages
+    return [
+      {
+        role: 'ai',
+        content: user 
+          ? `Hi ${user.name.split(' ')[0]}! I'm PuffyAI, your EndoPath support assistant. I'm here to help with anything about the app — features, account questions, how things work, or anything else. What can I help you with today?`
+          : "Hi there! I'm PuffyAI, your EndoPath support assistant. I'm here to help with anything about the app — features, account questions, how things work, or anything else. What can I help you with today?",
+      },
+    ]
+  })
+
+  useEffect(() => {
+    setPuffyMessages(messages)
+  }, [messages, setPuffyMessages])
+
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const chatEndRef = useRef(null)
@@ -32,7 +47,7 @@ export default function PuffyAI() {
     setLoading(true)
 
     try {
-      const res = await fetch('http://localhost:8000/api/puffyai/chat/', {
+      const res = await fetch('http://127.0.0.1:8000/api/puffyai/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages }),
@@ -112,6 +127,29 @@ export default function PuffyAI() {
                 <div className={aiStyles.messageBubble}>{m.content}</div>
               </div>
             ))}
+            {loading && (
+              <div className={`${aiStyles.message} ${aiStyles.ai}`}>
+                <div className={styles.aiAvatar}>
+                  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <ellipse cx="16" cy="15" rx="12" ry="11"/>
+                    <ellipse cx="5.5" cy="18" rx="4" ry="3.5"/>
+                    <ellipse cx="26.5" cy="18" rx="4" ry="3.5"/>
+                    <circle cx="12" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle cx="20" cy="13" r="1.6" fill="currentColor" stroke="none"/>
+                    <circle cx="10.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                    <circle cx="21.5" cy="18.5" r="2" fill="rgba(236,72,153,0.4)" stroke="none"/>
+                    <ellipse cx="16" cy="20.5" rx="2.2" ry="1.8" strokeWidth="1.5"/>
+                  </svg>
+                </div>
+                <div className={aiStyles.messageBubble}>
+                  <div className={aiStyles.typing}>
+                    <div className={aiStyles.dot}></div>
+                    <div className={aiStyles.dot}></div>
+                    <div className={aiStyles.dot}></div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={chatEndRef} />
           </div>
 

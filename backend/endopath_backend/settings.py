@@ -36,8 +36,9 @@ CORS_ALLOW_HEADERS = [
     'accept',
 ]
 
-# Claude API key — set via environment variable
-ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+# Featherless AI key — set via environment variable
+FEATHERLESS_API_KEY = os.environ.get('FEATHERLESS_API_KEY', '')
+FEATHERLESS_BASE_URL = "https://api.featherless.ai/v1"
 
 # Google OAuth
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
