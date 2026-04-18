@@ -7,6 +7,12 @@ import FlowingParticles from '../components/FlowingParticles'
 export default function Support() {
   const { isLocked } = useOutletContext()
   const [hovered, setHovered] = useState(null)
+  const [humanComingSoon, setHumanComingSoon] = useState(false)
+
+  const handleHumanClick = () => {
+    setHumanComingSoon(true)
+    setTimeout(() => setHumanComingSoon(false), 3000)
+  }
 
   return (
     <div className={styles.layout}>
@@ -138,8 +144,13 @@ export default function Support() {
                   </li>
                 </ul>
 
-                <button className={styles.cardCta} data-variant="human">
-                  Open a ticket
+                <button 
+                  className={styles.cardCta} 
+                  data-variant="human"
+                  onClick={handleHumanClick}
+                  disabled={humanComingSoon}
+                >
+                  {humanComingSoon ? 'Coming Soon' : 'Open a ticket'}
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
 

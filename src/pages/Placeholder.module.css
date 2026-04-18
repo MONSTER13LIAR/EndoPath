@@ -66,6 +66,85 @@
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
+.stagePrepareActive .stageIcon {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%) !important;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5), 0 0 0 4px rgba(236, 72, 153, 0.15) !important;
+}
+
+.stageActionActive .stageIcon {
+  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5), 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+
+.stagePrepareActive span {
+  color: #f472b6 !important;
+  text-shadow: 0 0 12px rgba(244, 114, 182, 0.4);
+}
+
+.stageActionActive span {
+  color: #f87171 !important;
+  text-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
+}
+
+.transitionDot {
+  position: absolute;
+  top: 21px;
+  width: 12px;
+  height: 12px;
+  background: #f472b6;
+  border-radius: 50%;
+  z-index: 10;
+  box-shadow: 0 0 15px #ec4899;
+}
+
+.animateDotToPrepare {
+  animation: moveDotToPrepare 2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+.animateDotToAction {
+  animation: moveDotToAction 2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+@keyframes moveDotToPrepare {
+  0% {
+    left: calc(100% / 12); /* Center of Predict (1/6 total width / 2) */
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.5);
+  }
+  80% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% / 4); /* Center of Prepare (3/6 total width / 2 or approx 25%) */
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes moveDotToAction {
+  0% {
+    left: calc(100% / 4); /* Center of Prepare */
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.5);
+  }
+  80% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    left: calc(500% / 12); /* Center of Action (approx 41.6%) */
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 .stageLine {
   position: absolute;
   top: 21px;
@@ -95,6 +174,152 @@
   align-items: center;
   background: rgba(124, 58, 237, 0.02);
   flex-shrink: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.newChatBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.newChatBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.newChatBtn span {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* ── Memory Saved Placeholder ── */
+.memoryPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 4rem;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.memoryIcon {
+  width: 120px;
+  height: 120px;
+  background: rgba(124, 58, 237, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(124, 58, 237, 0.15);
+  margin-bottom: 1rem;
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.1);
+}
+
+.memoryPlaceholder h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.memoryPlaceholder p {
+  color: var(--muted);
+  max-width: 400px;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.goToLibraryBtn {
+  background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 2.5rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+  margin-top: 1rem;
+}
+
+.goToLibraryBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.4);
+}
+.newChatModal {
+  max-width: 500px;
+}
+
+.warningSection {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.warningIcon {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.memoryNote {
+  font-size: 0.9rem;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.confirmNewChatBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.confirmNewChatBtn:hover {
+  background: #dc2626;
+  transform: scale(1.02);
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .chatHeader h3 {
@@ -179,6 +404,7 @@
   line-height: 1.6;
   position: relative;
   transition: transform 0.2s ease;
+  white-space: pre-wrap; /* Support multiple paragraphs and line breaks */
 }
 
 .messageBubble:hover {
@@ -499,6 +725,131 @@
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 15px 35px rgba(34, 197, 94, 0.4);
   filter: brightness(1.1);
+}
+
+/* ── Confirmation Modal ── */
+.confirmationModal {
+  max-width: 600px;
+  text-align: center;
+}
+
+.predictionStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.aiIconLarge {
+  width: 100px;
+  height: 100px;
+  background: rgba(124, 58, 237, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+}
+
+.probabilitySection {
+  background: rgba(10, 7, 24, 0.5);
+  padding: 1.5rem 2.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.probLabel {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.probValue {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.3));
+}
+
+.confirmationPrompt {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border-left: 4px solid var(--primary);
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.latestQuestion {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.continueBtn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continueBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.moveToPrepareBtn {
+  background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+  color: #fff;
+  border: none;
+  padding: 1.25rem 2.5rem;
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.moveToPrepareBtn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(124, 58, 237, 0.5);
+}
+
+.moveToActionBtn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important;
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 /* ── Typing Animation ── */

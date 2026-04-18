@@ -3,13 +3,27 @@ import { useOutletContext } from 'react-router-dom'
 import styles from './Library.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
+import { useChat } from '../context/ChatContext'
+
+const STAGES = [
+  { id: 'predict', label: 'Predict' },
+  { id: 'prepare', label: 'Prepare' },
+  { id: 'action', label: 'Action' },
+  { id: 'manage', label: 'Manage' },
+  { id: 'stabilize', label: 'Stabilize' },
+  { id: 'recover', label: 'Recover' },
+]
 
 export default function Library() {
   const { isLocked } = useOutletContext()
+  const { endoMessages, unlockedStages } = useChat()
   const [query, setQuery] = useState('')
   const [response, setResponse] = useState(null)   // { question, answer }
   const [loading, setLoading] = useState(false)
   const responseRef = useRef(null)
+
+  // Chat history state
+  const [selectedStage, setSelectedStage] = useState('predict')
 
   // Scroll response block to bottom when answer updates
   useEffect(() => {
@@ -39,6 +53,9 @@ export default function Library() {
       setLoading(false)
     }
   }
+
+  // Filter messages for the selected stage
+  const stageMessages = endoMessages ? endoMessages.filter(m => m.stage === selectedStage) : []
 
   return (
     <div className={styles.libraryLayout}>
@@ -84,19 +101,9 @@ export default function Library() {
                       {i % 2 === 0 ? (
                         /* body diagram ghost */
                         <svg width="28" height="36" viewBox="0 0 22 28" fill="none" stroke="rgba(167,139,250,0.25)" strokeWidth="1.2" strokeLinecap="round">
-                          <ellipse cx="11" cy="3.2" rx="2.6" ry="2.6"/>
-                          <ellipse cx="11" cy="7" rx="1.2" ry="0.9"/>
-                          <ellipse cx="11" cy="9.5" rx="4.8" ry="1.4"/>
-                          <ellipse cx="11" cy="13" rx="3.6" ry="3.2"/>
-                          <ellipse cx="11" cy="17.5" rx="4" ry="1.6"/>
-                          <ellipse cx="5.5" cy="11.5" rx="1.1" ry="2.6" transform="rotate(-10 5.5 11.5)"/>
-                          <ellipse cx="4.2" cy="16" rx="0.9" ry="2.4" transform="rotate(8 4.2 16)"/>
-                          <ellipse cx="16.5" cy="11.5" rx="1.1" ry="2.6" transform="rotate(10 16.5 11.5)"/>
-                          <ellipse cx="17.8" cy="16" rx="0.9" ry="2.4" transform="rotate(-8 17.8 16)"/>
-                          <ellipse cx="8.8" cy="21.5" rx="1.5" ry="2.8" transform="rotate(-4 8.8 21.5)"/>
-                          <ellipse cx="8.2" cy="26.2" rx="1.1" ry="2" transform="rotate(3 8.2 26.2)"/>
-                          <ellipse cx="13.2" cy="21.5" rx="1.5" ry="2.8" transform="rotate(4 13.2 21.5)"/>
-                          <ellipse cx="13.8" cy="26.2" rx="1.1" ry="2" transform="rotate(-3 13.8 26.2)"/>
+                          <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5"/>
+                          <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8"/>
+                          <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2"/>
                         </svg>
                       ) : (
                         /* photo ghost */
@@ -117,7 +124,7 @@ export default function Library() {
             </section>
           </FadeIn>
 
-          {/* Chat History */}
+          {/* Chat History Section */}
           <FadeIn immediate delay={320} duration={700} distance={24}>
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
@@ -129,25 +136,48 @@ export default function Library() {
                   </div>
                   <h3>Chat History</h3>
                 </div>
-                <span className={styles.countBadge}>0 sessions</span>
+                <span className={styles.countBadge}>{stageMessages.length} messages</span>
               </div>
 
-              {/* Ghost rows — shows the future layout */}
-              <div className={styles.historyList}>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className={styles.historyGhost}>
-                    <div className={styles.historyGhostAvatar} />
-                    <div className={styles.historyGhostLines}>
-                      <div className={styles.historyGhostTitle} style={{ width: `${55 + i * 10}%` }} />
-                      <div className={styles.historyGhostSub} style={{ width: `${30 + i * 8}%` }} />
-                    </div>
-                    <div className={styles.historyGhostDate} />
+              {/* Stage Progression Selector */}
+              <div className={styles.stageSelector}>
+                {STAGES.map((stage) => {
+                  const isUnlocked = unlockedStages.includes(stage.id)
+                  const isSelected = selectedStage === stage.id
+                  return (
+                    <button
+                      key={stage.id}
+                      className={`
+                        ${styles.stageBtn} 
+                        ${isSelected ? styles.stageBtnActive : ''} 
+                        ${!isUnlocked ? styles.stageBtnLocked : ''}
+                      `}
+                      onClick={() => isUnlocked && setSelectedStage(stage.id)}
+                      disabled={!isUnlocked}
+                    >
+                      {stage.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className={styles.historyContent}>
+                {stageMessages.length > 0 ? (
+                  <div className={styles.messageList}>
+                    {stageMessages.map((msg, i) => (
+                      <div key={i} className={`${styles.messageItem} ${styles[msg.role]}`}>
+                        <div className={styles.messageBubble}>
+                          {msg.content}
+                          {msg.image && <img src={msg.image} className={styles.msgImage} alt="Uploaded" />}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-
-              <div className={styles.emptyOverlay}>
-                <p>Your EndoAI conversation history will be saved and searchable here.</p>
+                ) : (
+                  <div className={styles.emptyHistory}>
+                    <p>No chat history available for the <strong>{selectedStage.toUpperCase()}</strong> stage.</p>
+                  </div>
+                )}
               </div>
             </section>
           </FadeIn>
@@ -156,11 +186,8 @@ export default function Library() {
 
         {/* ── Sticky chat bar + response block ── */}
         <div className={styles.chatBarWrap}>
-
-          {/* NerdAI response block */}
           {response && (
             <div className={styles.nerdBlock}>
-              {/* Header */}
               <div className={styles.nerdHeader}>
                 <div className={styles.nerdBadge}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -179,11 +206,7 @@ export default function Library() {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
-
-              {/* Question echo */}
               <p className={styles.nerdQuestion}>{response.question}</p>
-
-              {/* Answer */}
               <div className={styles.nerdAnswer} ref={responseRef}>
                 {loading
                   ? <span className={styles.nerdLoading}>Thinking…</span>
@@ -193,7 +216,6 @@ export default function Library() {
             </div>
           )}
 
-          {/* Chat bar */}
           <form className={styles.chatBar} onSubmit={handleSend}>
             <button type="button" className={styles.chatBarBtn} title="Voice input">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -203,7 +225,6 @@ export default function Library() {
                 <line x1="8" y1="23" x2="16" y2="23"/>
               </svg>
             </button>
-
             <input
               type="text"
               className={styles.chatBarInput}
@@ -211,7 +232,6 @@ export default function Library() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-
             <button type="submit" className={styles.chatBarSend} disabled={loading} title="Send">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"/>

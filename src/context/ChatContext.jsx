@@ -13,6 +13,15 @@ export function ChatProvider({ children }) {
     return saved ? JSON.parse(saved) : null
   })
 
+  const [currentStage, setCurrentStage] = useState(() => {
+    return localStorage.getItem('endopath_current_stage') || 'predict'
+  })
+
+  const [unlockedStages, setUnlockedStages] = useState(() => {
+    const saved = localStorage.getItem('endopath_unlocked_stages')
+    return saved ? JSON.parse(saved) : ['predict']
+  })
+
   useEffect(() => {
     if (endoMessages) localStorage.setItem('endopath_endo_chat', JSON.stringify(endoMessages))
   }, [endoMessages])
@@ -21,10 +30,20 @@ export function ChatProvider({ children }) {
     if (puffyMessages) localStorage.setItem('endopath_puffy_chat', JSON.stringify(puffyMessages))
   }, [puffyMessages])
 
+  useEffect(() => {
+    localStorage.setItem('endopath_current_stage', currentStage)
+  }, [currentStage])
+
+  useEffect(() => {
+    localStorage.setItem('endopath_unlocked_stages', JSON.stringify(unlockedStages))
+  }, [unlockedStages])
+
   return (
     <ChatContext.Provider value={{ 
       endoMessages, setEndoMessages, 
-      puffyMessages, setPuffyMessages 
+      puffyMessages, setPuffyMessages,
+      currentStage, setCurrentStage,
+      unlockedStages, setUnlockedStages
     }}>
       {children}
     </ChatContext.Provider>

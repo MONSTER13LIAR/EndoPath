@@ -162,6 +162,111 @@
   gap: 0;
 }
 
+/* Stage Selector in Library */
+.stageSelector {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.stageSelector::-webkit-scrollbar {
+  display: none;
+}
+
+.stageBtn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  padding: 0.5rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.stageBtn:hover:not(:disabled) {
+  background: rgba(167, 139, 250, 0.1);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.stageBtnActive {
+  background: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.stageBtnLocked {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* History Content */
+.historyContent {
+  min-height: 200px;
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.messageItem {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+}
+
+.messageItem.ai {
+  align-self: flex-start;
+}
+
+.messageItem.user {
+  align-self: flex-end;
+}
+
+.messageBubble {
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.ai .messageBubble {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user .messageBubble {
+  background: linear-gradient(135deg, var(--primary) 0%, #6D28D9 100%);
+  color: white;
+}
+
+.msgImage {
+  display: block;
+  max-width: 200px;
+  border-radius: 12px;
+  margin-top: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.emptyHistory {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 .historyGhost {
   display: flex;
   align-items: center;

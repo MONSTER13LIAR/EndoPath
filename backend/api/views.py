@@ -1,5 +1,6 @@
 import json
 import openai
+import re
 from django.conf import settings
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -15,29 +16,43 @@ def _get_client():
         base_url=settings.FEATHERLESS_BASE_URL
     )
 
+# Known multimodal models on Featherless.AI
+VISION_MODELS = [
+    'Kaushika04/Qwen2-VL-2B-Instruct-LoRA-FT_video_finetuned',
+    'Qwen/Qwen3-VL-30B-A3B-Instruct',
+    'xtuner/llava-llama-3-8b-v1_1',
+    'alibayram/doktor-gemma3-12b-vision3',
+    'OptimusePrime/Magistral-Small-2506-Vision'
+]
 
-def _parse_messages(raw_messages):
+def _parse_messages(raw_messages, model_id=''):
     """
-    Convert frontend message format [{role, content, image?}] to OpenAI format.
+    Convert frontend message format to OpenAI format.
+    If the model is NOT a known vision model, we strip the image to prevent 400 errors.
     """
     result = []
+    is_vision = any(v in model_id for v in VISION_MODELS)
+    
     for m in raw_messages:
         role = 'assistant' if m['role'] == 'ai' else 'user'
         content = m['content']
         
-        # If there's an image, OpenAI expects a list of content items
         if m.get('image'):
-            # m['image'] is a data URL: data:image/png;base64,xxxx
-            result.append({
-                'role': role,
-                'content': [
-                    {'type': 'text', 'text': content or "Analyze this image."},
-                    {
-                        'type': 'image_url',
-                        'image_url': {'url': m['image']}
-                    }
-                ]
-            })
+            if is_vision:
+                result.append({
+                    'role': role,
+                    'content': [
+                        {'type': 'text', 'text': content or "Analyze this image."},
+                        {
+                            'type': 'image_url',
+                            'image_url': {'url': m['image']}
+                        }
+                    ]
+                })
+            else:
+                # Text-only fallback
+                text_fallback = f"[USER UPLOADED AN IMAGE] {content}"
+                result.append({'role': role, 'content': text_fallback})
         else:
             result.append({'role': role, 'content': content})
     return result
@@ -46,18 +61,15 @@ def _parse_messages(raw_messages):
 def _stream_response(client, system_prompt, messages, model='meta-llama/Meta-Llama-3.1-8B-Instruct'):
     """Yield SSE-formatted chunks from a streaming OpenAI call."""
     full_messages = [{'role': 'system', 'content': system_prompt}] + messages
-    
     stream = client.chat.completions.create(
         model=model,
         messages=full_messages,
         stream=True,
         max_tokens=1024,
     )
-    
     for chunk in stream:
         if chunk.choices[0].delta.content:
             text = chunk.choices[0].delta.content
-            # SSE format: "data: <payload>\n\n"
             yield f"data: {json.dumps({'delta': text})}\n\n"
     yield "data: [DONE]\n\n"
 
@@ -66,24 +78,26 @@ def _stream_response(client, system_prompt, messages, model='meta-llama/Meta-Lla
 # EndoAI — personalised endometriosis health assistant
 # ---------------------------------------------------------------------------
 
-ENDOAI_SYSTEM = """You are EndoAI, a compassionate and knowledgeable AI health assistant built into EndoPath — \
-an app designed to help people living with endometriosis manage their health journey.
+ENDOAI_SYSTEM = """You are EndoAI, a compassionate and knowledgeable AI health assistant built into EndoPath.
 
-Your role covers six progressive stages of care:
-  1. Predict  — identify patterns and forecast flare-ups from symptom and cycle data
-  2. Prepare  — help the user prepare physically and mentally for upcoming difficult periods
-  3. Action   — guide immediate relief strategies during a flare
-  4. Manage   — support long-term lifestyle, medication, and treatment management
-  5. Stabilize — help sustain improvements and prevent regression
-  6. Recover  — support healing and return to normal activity post-flare
+Your role covers six progressive stages: Predict, Prepare, Action, Manage, Stabilize, Recover.
+
+Predict Stage: Ask 3-10 pinpointing questions, then 2-6 confirmation questions.
+Prepare Stage: Use checklist (Report, Body Map, Age) and explain (Time, Risk, Cost) before moving to Action.
+Action Stage: Immediate relief and treatment guidance.
 
 Guidelines:
-- Be warm, empathetic, and non-judgmental — endometriosis is a chronic, often invisible illness.
-- Always clarify you are an AI and not a doctor; encourage consulting healthcare professionals for diagnoses or medication changes.
-- Keep responses concise and actionable. Use bullet points for plans or steps.
-- Respect the user's current unlocked stage — don't give advice beyond their active stage unless asked.
-- Never make up clinical data or statistics.
-- If the user provides an image (e.g., a photo of a symptom, a medical report, or a food diary), analyze it carefully within the context of endometriosis care."""
+- Warm, empathetic, non-medical advice.
+- MEDICAL REPORT ANALYSIS: If an image is provided, extract all text and summarize key findings.
+- STRUCTURED STATUS: Every message MUST end with:
+  [PHASE: Pinpointing/Confirmation/Preparation/Action] [PROBABILITY: X%] [MARKER: NONE/MOVE_TO_PREPARE/MOVE_TO_ACTION]
+- DO NOT simulate UI buttons with text/HTML. Just use markers.
+
+FORMATTING RULES:
+- Use multiple paragraphs to separate different thoughts or sections of your response.
+- NEVER send a single large block of text.
+- Use clear punctuation (periods, commas) to make your empathetic tone feel natural and readable.
+- Use bullet points for lists or steps when appropriate."""
 
 @csrf_exempt
 @require_POST
@@ -92,70 +106,62 @@ def endoai_chat(request):
         body = json.loads(request.body)
         raw_messages = body.get('messages', [])
         stage = body.get('stage', 'predict')
-        stream = body.get('stream', False)
-        
-        # Switch to a Vision model if an image is provided in the last message
         has_image = any(m.get('image') for m in raw_messages)
-        default_model = 'meta-llama/Meta-Llama-3.1-8B-Instruct'
-        # Featherless often has Llama 3.2 Vision models
-        vision_model = 'meta-llama/Llama-3.2-11B-Vision-Instruct'
         
-        model = body.get('model', vision_model if has_image else default_model)
+        default_text_model = 'meta-llama/Meta-Llama-3.1-8B-Instruct'
+        preferred_vision_model = 'Kaushika04/Qwen2-VL-2B-Instruct-LoRA-FT_video_finetuned'
+        
+        target_model = body.get('model')
+        if not target_model:
+            target_model = preferred_vision_model if has_image else default_text_model
 
         if not raw_messages:
             return JsonResponse({'error': 'messages are required'}, status=400)
 
-        messages = _parse_messages(raw_messages)
-        # Append current stage context as system note
-        system = ENDOAI_SYSTEM + f"\n\nThe user is currently in the '{stage.capitalize()}' stage."
+        def get_completion(current_model, is_retry=False):
+            messages = _parse_messages(raw_messages, current_model)
+            is_multimodal = any(v in current_model for v in VISION_MODELS)
+            
+            extra_system = ""
+            if has_image and not is_multimodal:
+                extra_system = "\n\nNOTE: User uploaded an image. Ask for a detailed description since vision is currently restricted."
+            
+            system = ENDOAI_SYSTEM + extra_system + f"\n\nCURRENT CONTEXT: User is in '{stage.capitalize()}'."
+            
+            if stage == 'predict':
+                system += f"\n- Progress: {len([m for m in raw_messages if m['role']=='user'])} user responses."
+            elif stage == 'prepare':
+                img_ok = "YES" if any(m.get('image') for m in raw_messages) else "NO"
+                map_ok = "YES" if any('[Body areas selected:' in (m.get('content') or '') for m in raw_messages) else "NO"
+                system += f"\n- Checklist: Report:{img_ok}, BodyMap:{map_ok}. Rule: Use MOVE_TO_ACTION only when all YES and info explained."
 
-        client = _get_client()
+            client = _get_client()
+            try:
+                response = client.chat.completions.create(
+                    model=current_model,
+                    max_tokens=1024,
+                    messages=[{'role': 'system', 'content': system}] + messages,
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                # Automatic Fallback for vision model failures
+                if not is_retry and (has_image or current_model != default_text_model):
+                    return get_completion(default_text_model, is_retry=True)
+                raise e
 
-        if stream:
-            response = StreamingHttpResponse(
-                _stream_response(client, system, messages, model=model),
-                content_type='text/event-stream',
-            )
-            response['Cache-Control'] = 'no-cache'
-            response['X-Accel-Buffering'] = 'no'
-            return response
+        content = get_completion(target_model)
+        content = re.sub(r'<[^>]*>', '', content) # Strip hallucinated HTML
 
-        # Non-streaming (default)
-        full_messages = [{'role': 'system', 'content': system}] + messages
-        response = client.chat.completions.create(
-            model=model,
-            max_tokens=1024,
-            messages=full_messages,
-        )
-        return JsonResponse({'content': response.choices[0].message.content})
+        # Fallback block if AI forgets
+        if "[PROBABILITY:" not in content:
+            prob = min(len(raw_messages) * 10, 60)
+            content += f"\n[PHASE: {stage.capitalize()}] [PROBABILITY: {prob}%] [MARKER: NONE]"
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'invalid JSON'}, status=400)
-    except openai.AuthenticationError:
-        return JsonResponse({'error': 'invalid API key'}, status=500)
+        return JsonResponse({'content': content})
+
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
-# ---------------------------------------------------------------------------
-# NerdAI — Library research & health-record assistant
-# ---------------------------------------------------------------------------
-
-NERDAI_SYSTEM = """You are NerdAI, the knowledgeable research assistant inside EndoPath's Health Library.
-
-Your personality: precise, a little nerdy, genuinely enthusiastic about medical knowledge — but always clear and jargon-free when it matters.
-
-Your job:
-- Explain medical terms, conditions, and procedures related to endometriosis and women's health
-- Help users understand entries in their health library (body maps, symptom logs, chat history)
-- Provide research context: what a symptom might mean, what a treatment does, what a test measures
-- Answer questions about endometriosis stages, treatments, hormones, pain management, fertility
-
-Rules:
-- Keep answers concise — 2-4 short paragraphs max. The user can see the library behind you.
-- Always remind users you are an AI and not a substitute for their doctor when giving clinical guidance.
-- Be accurate. If unsure, say so rather than guessing.
-- Use plain language; introduce medical terms only when helpful, then immediately explain them."""
 
 @csrf_exempt
 @require_POST
@@ -164,53 +170,18 @@ def nerdai_chat(request):
         body = json.loads(request.body)
         message = body.get('message', '').strip()
         model = body.get('model', 'meta-llama/Meta-Llama-3.1-8B-Instruct')
-        if not message:
-            return JsonResponse({'error': 'message is required'}, status=400)
+        if not message: return JsonResponse({'error': 'message required'}, status=400)
 
         client = _get_client()
         response = client.chat.completions.create(
             model=model,
             max_tokens=512,
-            messages=[
-                {'role': 'system', 'content': NERDAI_SYSTEM},
-                {'role': 'user', 'content': message}
-            ],
+            messages=[{'role': 'system', 'content': "You are NerdAI assistant."}, {'role': 'user', 'content': message}],
         )
         return JsonResponse({'content': response.choices[0].message.content})
-
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'invalid JSON'}, status=400)
-    except openai.AuthenticationError:
-        return JsonResponse({'error': 'invalid API key'}, status=500)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
-# ---------------------------------------------------------------------------
-# PuffyAI — EndoPath app support assistant
-# ---------------------------------------------------------------------------
-
-PUFFYAI_SYSTEM = """You are PuffyAI, the friendly and helpful support assistant for the EndoPath app.
-
-EndoPath App Structure (Post-Login):
-- Dashboard: The home screen showing Health Trends, Flare Risk, and progress through the 6 Care Stages.
-- EndoAI: Personalised AI chat for health management (Predict, Prepare, Action, Manage, Stabilize, Recover).
-- Library: Contains medical articles, health guides, and MOST IMPORTANTLY:
-    * All your previous Chat History with EndoAI and NerdAI.
-    * Your saved symptom logs and body maps.
-- Referral Tool: Helps you find and connect with endometriosis specialist doctors and clinics.
-- Support: Where users can find FAQs and talk to you (PuffyAI).
-
-Your role:
-- Answer questions about how to use the EndoPath app and where to find things.
-- If a user asks where their chat history is, tell them it's in the 'Library'.
-- Help users navigate the app, understand their stage, or troubleshoot issues.
-- Be encouraging and supportive — users are dealing with a difficult chronic condition.
-
-Guidelines:
-- Keep answers short, friendly, and clear.
-- If a question is about personal health symptoms, gently redirect to EndoAI.
-- Do not make up features that don't exist in EndoPath."""
 
 @csrf_exempt
 @require_POST
@@ -218,35 +189,15 @@ def puffyai_chat(request):
     try:
         body = json.loads(request.body)
         raw_messages = body.get('messages', [])
-        stream = body.get('stream', False)
         model = body.get('model', 'meta-llama/Meta-Llama-3.1-8B-Instruct')
+        if not raw_messages: return JsonResponse({'error': 'messages required'}, status=400)
 
-        if not raw_messages:
-            return JsonResponse({'error': 'messages are required'}, status=400)
-
-        messages = _parse_messages(raw_messages)
         client = _get_client()
-
-        if stream:
-            response = StreamingHttpResponse(
-                _stream_response(client, PUFFYAI_SYSTEM, messages, model=model),
-                content_type='text/event-stream',
-            )
-            response['Cache-Control'] = 'no-cache'
-            response['X-Accel-Buffering'] = 'no'
-            return response
-
-        full_messages = [{'role': 'system', 'content': PUFFYAI_SYSTEM}] + messages
         response = client.chat.completions.create(
             model=model,
             max_tokens=512,
-            messages=full_messages,
+            messages=[{'role': 'system', 'content': "You are PuffyAI support."}] + _parse_messages(raw_messages),
         )
         return JsonResponse({'content': response.choices[0].message.content})
-
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'invalid JSON'}, status=400)
-    except openai.AuthenticationError:
-        return JsonResponse({'error': 'invalid API key'}, status=500)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
