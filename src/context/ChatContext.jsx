@@ -22,6 +22,11 @@ export function ChatProvider({ children }) {
     return saved ? JSON.parse(saved) : ['predict']
   })
 
+  const [keyInsights, setKeyInsights] = useState(() => {
+    const saved = localStorage.getItem('endopath_key_insights')
+    return saved ? JSON.parse(saved) : []
+  })
+
   useEffect(() => {
     if (endoMessages) localStorage.setItem('endopath_endo_chat', JSON.stringify(endoMessages))
   }, [endoMessages])
@@ -38,12 +43,17 @@ export function ChatProvider({ children }) {
     localStorage.setItem('endopath_unlocked_stages', JSON.stringify(unlockedStages))
   }, [unlockedStages])
 
+  useEffect(() => {
+    localStorage.setItem('endopath_key_insights', JSON.stringify(keyInsights))
+  }, [keyInsights])
+
   return (
     <ChatContext.Provider value={{ 
       endoMessages, setEndoMessages, 
       puffyMessages, setPuffyMessages,
       currentStage, setCurrentStage,
-      unlockedStages, setUnlockedStages
+      unlockedStages, setUnlockedStages,
+      keyInsights, setKeyInsights
     }}>
       {children}
     </ChatContext.Provider>

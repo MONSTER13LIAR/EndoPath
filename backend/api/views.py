@@ -26,78 +26,57 @@ VISION_MODELS = [
 ]
 
 def _parse_messages(raw_messages, model_id=''):
-    """
-    Convert frontend message format to OpenAI format.
-    If the model is NOT a known vision model, we strip the image to prevent 400 errors.
-    """
     result = []
     is_vision = any(v in model_id for v in VISION_MODELS)
-    
     for m in raw_messages:
         role = 'assistant' if m['role'] == 'ai' else 'user'
         content = m['content']
-        
         if m.get('image'):
             if is_vision:
                 result.append({
-                    'role': role,
+                    'role' : role,
                     'content': [
                         {'type': 'text', 'text': content or "Analyze this image."},
-                        {
-                            'type': 'image_url',
-                            'image_url': {'url': m['image']}
-                        }
+                        {'type': 'image_url', 'image_url': {'url' : m['image']}}
                     ]
                 })
             else:
-                # Text-only fallback
                 text_fallback = f"[USER UPLOADED AN IMAGE] {content}"
                 result.append({'role': role, 'content': text_fallback})
         else:
             result.append({'role': role, 'content': content})
     return result
 
-
-def _stream_response(client, system_prompt, messages, model='meta-llama/Meta-Llama-3.1-8B-Instruct'):
-    """Yield SSE-formatted chunks from a streaming OpenAI call."""
-    full_messages = [{'role': 'system', 'content': system_prompt}] + messages
-    stream = client.chat.completions.create(
-        model=model,
-        messages=full_messages,
-        stream=True,
-        max_tokens=1024,
-    )
-    for chunk in stream:
-        if chunk.choices[0].delta.content:
-            text = chunk.choices[0].delta.content
-            yield f"data: {json.dumps({'delta': text})}\n\n"
-    yield "data: [DONE]\n\n"
-
-
 # ---------------------------------------------------------------------------
 # EndoAI — personalised endometriosis health assistant
 # ---------------------------------------------------------------------------
 
 ENDOAI_SYSTEM = """You are EndoAI, a compassionate and knowledgeable AI health assistant built into EndoPath.
+Your role covers six progressive stages of care:
+  1. Predict  — pinpoint symptoms and forecast flares.
+  2. Prepare  — checklist and prep for the upcoming action.
+  3. Action   — immediate relief and treatment implementation.
+  4. Manage   — long-term lifestyle and medication routine.
+  5. Stabilize — maintaining improvements and mental health.
+  6. Recover  — reflection and returning to normal activity.
 
-Your role covers six progressive stages: Predict, Prepare, Action, Manage, Stabilize, Recover.
-
-Predict Stage: Ask 3-10 pinpointing questions, then 2-6 confirmation questions.
-Prepare Stage: Use checklist (Report, Body Map, Age) and explain (Time, Risk, Cost) before moving to Action.
-Action Stage: Immediate relief and treatment guidance.
-
-Guidelines:
-- Warm, empathetic, non-medical advice.
-- MEDICAL REPORT ANALYSIS: If an image is provided, extract all text and summarize key findings.
-- STRUCTURED STATUS: Every message MUST end with:
-  [PHASE: Pinpointing/Confirmation/Preparation/Action] [PROBABILITY: X%] [MARKER: NONE/MOVE_TO_PREPARE/MOVE_TO_ACTION]
-- DO NOT simulate UI buttons with text/HTML. Just use markers.
+STRICT TRANSITION MARKERS:
+- [MOVE_TO_PREPARE]
+- [MOVE_TO_ACTION]
+- [MOVE_TO_MANAGE]
+- [MOVE_TO_STABILIZE]
+- [MOVE_TO_RECOVER]
 
 FORMATTING RULES:
-- Use multiple paragraphs to separate different thoughts or sections of your response.
-- NEVER send a single large block of text.
-- Use clear punctuation (periods, commas) to make your empathetic tone feel natural and readable.
-- Use bullet points for lists or steps when appropriate."""
+- Use multiple paragraphs. Use clear punctuation.
+- Warm, empathetic tone. No clinical diagnoses.
+- Every message MUST end with a status block:
+  [PHASE: StageName] [PROBABILITY: X%] [MARKER: NONE/TRANSITION_MARKER]
+
+KEY INSIGHT EXTRACTION:
+- Whenever the user shares a significant detail (e.g., 'pain in lower right abdomen', 'flares after coffee', 'CA-125 test was 35'), you MUST extract it.
+- Append [KEY_INSIGHT: Brief summary of fact] to the end of your message alongside the status block.
+- Keep insights short and data-focused (max 6-8 words)."""
 
 @csrf_exempt
 @require_POST
@@ -111,12 +90,7 @@ def endoai_chat(request):
         default_text_model = 'meta-llama/Meta-Llama-3.1-8B-Instruct'
         preferred_vision_model = 'Kaushika04/Qwen2-VL-2B-Instruct-LoRA-FT_video_finetuned'
         
-        target_model = body.get('model')
-        if not target_model:
-            target_model = preferred_vision_model if has_image else default_text_model
-
-        if not raw_messages:
-            return JsonResponse({'error': 'messages are required'}, status=400)
+        target_model = body.get('model') or (preferred_vision_model if has_image else default_text_model)
 
         def get_completion(current_model, is_retry=False):
             messages = _parse_messages(raw_messages, current_model)
@@ -124,16 +98,25 @@ def endoai_chat(request):
             
             extra_system = ""
             if has_image and not is_multimodal:
-                extra_system = "\n\nNOTE: User uploaded an image. Ask for a detailed description since vision is currently restricted."
+                extra_system = "\n\nNOTE: User uploaded an image. Vision is restricted; ask for a description."
             
-            system = ENDOAI_SYSTEM + extra_system + f"\n\nCURRENT CONTEXT: User is in '{stage.capitalize()}'."
+            system = ENDOAI_SYSTEM + extra_system + f"\n\nCURRENT CONTEXT: User is in '{stage.capitalize()}' stage."
             
+            # --- STAGE REQUIREMENTS ---
             if stage == 'predict':
-                system += f"\n- Progress: {len([m for m in raw_messages if m['role']=='user'])} user responses."
+                system += "\nREQUIREMENT: 3-10 pinpointing questions then 2-6 confirmation. If prob > 70%, use [MOVE_TO_PREPARE]."
             elif stage == 'prepare':
                 img_ok = "YES" if any(m.get('image') for m in raw_messages) else "NO"
                 map_ok = "YES" if any('[Body areas selected:' in (m.get('content') or '') for m in raw_messages) else "NO"
-                system += f"\n- Checklist: Report:{img_ok}, BodyMap:{map_ok}. Rule: Use MOVE_TO_ACTION only when all YES and info explained."
+                system += f"\nCHECKLIST: Report:{img_ok}, BodyMap:{map_ok}. Discuss Age, explain Time/Risk/Cost. Then use [MOVE_TO_ACTION]."
+            elif stage == 'action':
+                system += "\nCHECKLIST: Guide immediate relief. User must confirm they tried a relief strategy. Then use [MOVE_TO_MANAGE]."
+            elif stage == 'manage':
+                system += "\nCHECKLIST: Discuss long-term diet/supplements. User must confirm consistency. Then use [MOVE_TO_STABILIZE]."
+            elif stage == 'stabilize':
+                system += "\nCHECKLIST: Mental health check-in and activity levels. Then use [MOVE_TO_RECOVER]."
+            elif stage == 'recover':
+                system += "\nCHECKLIST: Final reflection. Then use [MOVE_TO_PREDICT] to restart cycle."
 
             client = _get_client()
             try:
@@ -143,45 +126,50 @@ def endoai_chat(request):
                     messages=[{'role': 'system', 'content': system}] + messages,
                 )
                 return response.choices[0].message.content
-            except Exception as e:
-                # Automatic Fallback for vision model failures
+            except Exception:
                 if not is_retry and (has_image or current_model != default_text_model):
                     return get_completion(default_text_model, is_retry=True)
-                raise e
+                raise
 
         content = get_completion(target_model)
-        content = re.sub(r'<[^>]*>', '', content) # Strip hallucinated HTML
+        content = re.sub(r'<[^>]*>', '', content)
 
-        # Fallback block if AI forgets
         if "[PROBABILITY:" not in content:
-            prob = min(len(raw_messages) * 10, 60)
-            content += f"\n[PHASE: {stage.capitalize()}] [PROBABILITY: {prob}%] [MARKER: NONE]"
+            content += f"\n[PHASE: {stage.capitalize()}] [PROBABILITY: 50%] [MARKER: NONE]"
 
         return JsonResponse({'content': content})
-
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
+# ... NerdAI and PuffyAI stay similar ...
 @csrf_exempt
 @require_POST
 def nerdai_chat(request):
     try:
         body = json.loads(request.body)
         message = body.get('message', '').strip()
+        history = body.get('history', [])
         model = body.get('model', 'meta-llama/Meta-Llama-3.1-8B-Instruct')
-        if not message: return JsonResponse({'error': 'message required'}, status=400)
 
+        NERDAI_SYSTEM = """You are NerdAI, the research expert for EndoPath. 
+YOUR ROLE:
+1. EXPLAIN: Medical terms, conditions, and procedures.
+2. SEARCH: Help users find specific topics in their EndoAI chat history (provided below).
+3. ANALYZE: Use body maps and reports to provide context.
+You are accurate, helpful, and concise. Remind users you are NOT a doctor."""
+
+        history_context = "\n--- USER'S ENDOAI CHAT HISTORY ---\n"
+        for m in (history or []):
+            history_context += f"[{m.get('stage','').upper()}] {m['role']}: {m['content']}\n"
         client = _get_client()
         response = client.chat.completions.create(
             model=model,
-            max_tokens=512,
-            messages=[{'role': 'system', 'content': "You are NerdAI assistant."}, {'role': 'user', 'content': message}],
+            max_tokens=1024,
+            messages=[{'role': 'system', 'content': NERDAI_SYSTEM + history_context}, {'role': 'user', 'content': message}],
         )
         return JsonResponse({'content': response.choices[0].message.content})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 @csrf_exempt
 @require_POST
@@ -189,14 +177,25 @@ def puffyai_chat(request):
     try:
         body = json.loads(request.body)
         raw_messages = body.get('messages', [])
+        context = body.get('context', {})
         model = body.get('model', 'meta-llama/Meta-Llama-3.1-8B-Instruct')
-        if not raw_messages: return JsonResponse({'error': 'messages required'}, status=400)
+        
+        PUFFYAI_SYSTEM = """You are PuffyAI, the friendly support assistant for EndoPath. 
+YOUR KNOWLEDGE:
+1. DASHBOARD: Shows Health Trends, Flare Risk, and Stage Progression.
+2. ENDOAI: Guides users through 6 stages (Predict, Prepare, Action, Manage, Stabilize, Recover).
+3. NEW CHAT: Clears current stage memory but remembers previous stages.
+4. LIBRARY: Stores Body Maps & Photos. Records are blurred (click 'Reveal').
+5. NERDAI: Inside Library, searches chat history.
+6. BODY MAPPER: High-precision tool with 8 segments.
+If asked about health symptoms, redirect to EndoAI. If asked to find past chats, redirect to NerdAI."""
 
+        app_context = f"\n--- APP CONTEXT ---\nCurrent Stage: {context.get('currentStage')}\nUnlocked: {context.get('unlockedStages')}"
         client = _get_client()
         response = client.chat.completions.create(
             model=model,
             max_tokens=512,
-            messages=[{'role': 'system', 'content': "You are PuffyAI support."}] + _parse_messages(raw_messages),
+            messages=[{'role': 'system', 'content': PUFFYAI_SYSTEM + app_context}] + _parse_messages(raw_messages, model),
         )
         return JsonResponse({'content': response.choices[0].message.content})
     except Exception as e:

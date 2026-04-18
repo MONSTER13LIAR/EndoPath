@@ -155,6 +155,121 @@
   opacity: 0.6;
 }
 
+/* Real Media Cards */
+.mediaCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(167, 139, 250, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.mediaCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mediaPreview {
+  aspect-ratio: 3/4;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mediaImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mediaMapWrap {
+  width: 80%;
+  height: 80%;
+}
+
+.miniBodySvg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.2));
+}
+
+.mediaInfo {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mediaStage {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+.mediaType {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Privacy Reveal Styles */
+.mediaContainer {
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mediaBlurred .mediaGrid {
+  filter: blur(15px) grayscale(0.5);
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
+.revealOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: rgba(10, 7, 24, 0.4);
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.revealBtn {
+  background: rgba(124, 58, 237, 0.9);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+}
+
+.revealBtn:hover {
+  background: var(--primary);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
+}
+
+.revealBtn svg {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
 /* ── Chat History ghost rows ── */
 .historyList {
   display: flex;

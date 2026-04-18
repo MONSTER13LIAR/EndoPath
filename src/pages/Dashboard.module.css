@@ -530,6 +530,31 @@
   gap: 0.5rem;
 }
 
+.insightList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0.2rem 0;
+}
+
+.dynamicInsight {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0 !important;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  opacity: 1 !important;
+}
+
+.insightDot {
+  color: var(--primary);
+  font-size: 0.8rem;
+  margin-top: 2px;
+  text-shadow: 0 0 10px var(--primary);
+}
+
 .insightLabel {
   font-size: 0.7rem;
   font-weight: 800;

@@ -97,52 +97,32 @@
   box-shadow: 0 0 15px #ec4899;
 }
 
-.animateDotToPrepare {
-  animation: moveDotToPrepare 2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
-}
+/* ── Dynamic Stage Animations ── */
+.animateToPrepare { animation: move-to-prepare 2s forwards; }
+.animateToAction  { animation: move-to-action 2s forwards; }
+.animateToManage  { animation: move-to-manage 2s forwards; }
+.animateToStabilize { animation: move-to-stabilize 2s forwards; }
+.animateToRecover { animation: move-to-recover 2s forwards; }
 
-.animateDotToAction {
-  animation: moveDotToAction 2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+@keyframes move-to-prepare {
+  0%   { left: 8.33%; }
+  100% { left: 25%; }
 }
-
-@keyframes moveDotToPrepare {
-  0% {
-    left: calc(100% / 12); /* Center of Predict (1/6 total width / 2) */
-    transform: scale(1);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1.5);
-  }
-  80% {
-    transform: scale(1.5);
-    opacity: 1;
-  }
-  100% {
-    left: calc(100% / 4); /* Center of Prepare (3/6 total width / 2 or approx 25%) */
-    transform: scale(1);
-    opacity: 0;
-  }
+@keyframes move-to-action {
+  0%   { left: 25%; }
+  100% { left: 41.66%; }
 }
-
-@keyframes moveDotToAction {
-  0% {
-    left: calc(100% / 4); /* Center of Prepare */
-    transform: scale(1);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1.5);
-  }
-  80% {
-    transform: scale(1.5);
-    opacity: 1;
-  }
-  100% {
-    left: calc(500% / 12); /* Center of Action (approx 41.6%) */
-    transform: scale(1);
-    opacity: 0;
-  }
+@keyframes move-to-manage {
+  0%   { left: 41.66%; }
+  100% { left: 58.33%; }
+}
+@keyframes move-to-stabilize {
+  0%   { left: 58.33%; }
+  100% { left: 75%; }
+}
+@keyframes move-to-recover {
+  0%   { left: 75%; }
+  100% { left: 91.66%; }
 }
 
 .stageLine {

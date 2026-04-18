@@ -3,6 +3,7 @@ import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
 import { useAuth } from '../context/AuthContext'
+import { useChat } from '../context/ChatContext'
 
 const STATS = [
   {
@@ -97,8 +98,12 @@ function intensityTagColor(n) {
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const { keyInsights } = useChat()
   const isDemo = !user
   const navigate = useNavigate()
+
+  // Only show the most recent 3 insights
+  const latestInsights = keyInsights?.slice(-3).reverse() || []
 
 
   return (
@@ -291,9 +296,17 @@ export default function Dashboard() {
                 </svg>
               </div>
               <div className={styles.insightBody}>
-                <span className={styles.insightLabel}>EndoAI Insight</span>
+                <span className={styles.insightLabel}>EndoAI Insights</span>
                 {isDemo ? (
                   <p>Your flare risk has dropped 12% this week. Continuing your anti-inflammatory diet and low-impact movement is making a measurable difference.</p>
+                ) : latestInsights.length > 0 ? (
+                  <div className={styles.insightList}>
+                    {latestInsights.map((insight, i) => (
+                      <p key={i} className={styles.dynamicInsight}>
+                        <span className={styles.insightDot}>✦</span> {insight}
+                      </p>
+                    ))}
+                  </div>
                 ) : (
                   <p style={{ opacity: 0.5 }}>No insights yet — EndoAI needs a few logs to start recognising your patterns.</p>
                 )}

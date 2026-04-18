@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import styles from './Library.module.css'
 import FadeIn from '../components/FadeIn'
@@ -24,6 +24,39 @@ export default function Library() {
 
   // Chat history state
   const [selectedStage, setSelectedStage] = useState('predict')
+  const [isMediaRevealed, setIsMediaRevealed] = useState(false)
+
+  // Extract media items (Images and Body Maps) from all endoMessages
+  const mediaItems = useMemo(() => {
+    if (!endoMessages) return []
+    const items = []
+    
+    endoMessages.forEach((msg, idx) => {
+      // 1. Extract Images
+      if (msg.image) {
+        items.push({
+          id: `img-${idx}`,
+          type: 'image',
+          url: msg.image,
+          stage: msg.stage,
+          role: msg.role
+        })
+      }
+      
+      // 2. Extract Body Maps
+      if (msg.bodyParts && msg.bodyParts.length > 0) {
+        items.push({
+          id: `map-${idx}`,
+          type: 'bodymap',
+          parts: msg.bodyParts,
+          stage: msg.stage,
+          role: msg.role
+        })
+      }
+    })
+    
+    return items.reverse() // Newest first
+  }, [endoMessages])
 
   // Scroll response block to bottom when answer updates
   useEffect(() => {
@@ -43,7 +76,10 @@ export default function Library() {
       const res = await fetch('http://127.0.0.1:8000/api/nerdai/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: question }),
+        body: JSON.stringify({ 
+          message: question,
+          history: endoMessages // Provide full history for analysis
+        }),
       })
       const data = await res.json()
       setResponse({ question, answer: data.content ?? data.error ?? 'Something went wrong.' })
@@ -57,6 +93,33 @@ export default function Library() {
   // Filter messages for the selected stage
   const stageMessages = endoMessages ? endoMessages.filter(m => m.stage === selectedStage) : []
 
+  // Mini Body Mapper component for the library grid
+  const MiniBody = ({ parts }) => (
+    <svg viewBox="0 0 22 28" className={styles.miniBodySvg}>
+      <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5" fill={parts.includes('Head') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8" fill={parts.includes('Neck') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2" fill={parts.includes('Chest') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      
+      {/* Abdomen Grid */}
+      <ellipse cx="8.5" cy="11.5" rx="1.8" ry="1.2" fill={parts.includes('Upper Left Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="11" cy="11.5" rx="1.2" ry="1.2" fill={parts.includes('Upper Center Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="13.5" cy="11.5" rx="1.8" ry="1.2" fill={parts.includes('Upper Right Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      
+      <ellipse cx="8.2" cy="14.5" rx="2.2" ry="1.5" fill={parts.includes('Lower Left Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="11" cy="14.5" rx="1.5" ry="1.5" fill={parts.includes('Lower Center Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="13.8" cy="14.5" rx="2.2" ry="1.5" fill={parts.includes('Lower Right Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+
+      <ellipse cx="8.5" cy="18.5" rx="2.5" ry="2" fill={parts.includes('Left Pelvic Region') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      <ellipse cx="13.5" cy="18.5" rx="2.5" ry="2" fill={parts.includes('Right Pelvic Region') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
+      
+      {/* Simplified Limbs */}
+      <path d="M5.5 10 L3 17" stroke={parts.some(p => p.includes('Left') && p.includes('Arm')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+      <path d="M16.5 10 L19 17" stroke={parts.some(p => p.includes('Right') && p.includes('Arm')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+      <path d="M8.5 18 L8 28" stroke={parts.some(p => p.includes('Left') && p.includes('Leg')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+      <path d="M13.5 18 L14 28" stroke={parts.some(p => p.includes('Right') && p.includes('Leg')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+    </svg>
+  )
+
   return (
     <div className={styles.libraryLayout}>
       <FlowingParticles />
@@ -68,7 +131,7 @@ export default function Library() {
             <div className={styles.pageTitleGroup}>
               <span className={styles.eyebrow}>Library</span>
               <h2 className={styles.pageTitle}>Your Health Records</h2>
-              <p className={styles.pageSub}>Body maps and chat sessions shared with EndoAI will be stored here.</p>
+              <p className={styles.pageSub}>Body maps and chat sessions shared with EndoAI are stored here.</p>
             </div>
           </div>
         </FadeIn>
@@ -90,36 +153,62 @@ export default function Library() {
                   </div>
                   <h3>Body Maps &amp; Photos</h3>
                 </div>
-                <span className={styles.countBadge}>0 items</span>
+                <span className={styles.countBadge}>{mediaItems.length} items</span>
               </div>
 
-              {/* Ghost grid — shows the future layout */}
-              <div className={styles.mediaGrid}>
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className={styles.mediaGhost}>
-                    <div className={styles.mediaGhostIcon}>
-                      {i % 2 === 0 ? (
-                        /* body diagram ghost */
-                        <svg width="28" height="36" viewBox="0 0 22 28" fill="none" stroke="rgba(167,139,250,0.25)" strokeWidth="1.2" strokeLinecap="round">
-                          <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5"/>
-                          <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8"/>
-                          <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2"/>
-                        </svg>
-                      ) : (
-                        /* photo ghost */
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.25)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2"/>
-                          <circle cx="8.5" cy="8.5" r="1.5"/>
-                          <polyline points="21 15 16 10 5 21"/>
-                        </svg>
-                      )}
-                    </div>
+              <div className={`${styles.mediaContainer} ${!isMediaRevealed ? styles.mediaBlurred : ''}`}>
+                {mediaItems.length > 0 ? (
+                  <div className={styles.mediaGrid}>
+                    {mediaItems.map((item) => (
+                      <div key={item.id} className={styles.mediaCard}>
+                        <div className={styles.mediaPreview}>
+                          {item.type === 'image' ? (
+                            <img src={item.url} alt="Shared report" className={styles.mediaImg} />
+                          ) : (
+                            <div className={styles.mediaMapWrap}>
+                              <MiniBody parts={item.parts} />
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.mediaInfo}>
+                          <span className={styles.mediaStage}>{item.stage.toUpperCase()}</span>
+                          <span className={styles.mediaType}>{item.type === 'image' ? 'Photo' : 'Body Map'}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <>
+                    <div className={styles.mediaGrid}>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className={styles.mediaGhost}>
+                          <div className={styles.mediaGhostIcon}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.15)" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className={styles.emptyOverlay}>
+                      <p>Body maps and photos you share in EndoAI will appear here.</p>
+                    </div>
+                  </>
+                )}
 
-              <div className={styles.emptyOverlay}>
-                <p>Body maps and photos you share in EndoAI will appear here.</p>
+                {/* Privacy Reveal Overlay */}
+                {!isMediaRevealed && mediaItems.length > 0 && (
+                  <div className={styles.revealOverlay}>
+                    <button 
+                      className={styles.revealBtn}
+                      onClick={() => setIsMediaRevealed(true)}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      Reveal Records
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           </FadeIn>
@@ -142,7 +231,7 @@ export default function Library() {
               {/* Stage Progression Selector */}
               <div className={styles.stageSelector}>
                 {STAGES.map((stage) => {
-                  const isUnlocked = unlockedStages.includes(stage.id)
+                  const isUnlocked = unlockedStages?.includes(stage.id)
                   const isSelected = selectedStage === stage.id
                   return (
                     <button

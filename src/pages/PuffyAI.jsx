@@ -10,7 +10,7 @@ import { useChat } from '../context/ChatContext'
 export default function PuffyAI() {
   const { isLocked } = useOutletContext()
   const { user } = useAuth()
-  const { puffyMessages, setPuffyMessages } = useChat()
+  const { puffyMessages, setPuffyMessages, currentStage, unlockedStages } = useChat()
   
   const [messages, setMessages] = useState(() => {
     if (puffyMessages) return puffyMessages
@@ -50,7 +50,10 @@ export default function PuffyAI() {
       const res = await fetch('http://127.0.0.1:8000/api/puffyai/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ 
+          messages: updatedMessages,
+          context: { currentStage, unlockedStages }
+        }),
       })
       const data = await res.json()
       setMessages(prev => [...prev, { role: 'ai', content: data.content ?? data.error ?? 'Something went wrong.' }])
