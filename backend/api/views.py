@@ -73,10 +73,19 @@ FORMATTING RULES:
 - Every message MUST end with a status block:
   [PHASE: StageName] [PROBABILITY: X%] [MARKER: NONE/TRANSITION_MARKER]
 
-KEY INSIGHT EXTRACTION:
+KEY_INSIGHT EXTRACTION:
 - Whenever the user shares a significant detail (e.g., 'pain in lower right abdomen', 'flares after coffee', 'CA-125 test was 35'), you MUST extract it.
 - Append [KEY_INSIGHT: Brief summary of fact] to the end of your message alongside the status block.
-- Keep insights short and data-focused (max 6-8 words)."""
+- Keep insights short and data-focused (max 6-8 words).
+
+REFERRAL & RECOMMENDATION EXTRACTION:
+- If you suggest a medical test (e.g., Ultrasound, MRI, Blood Test), an appointment (e.g., Gynecologist, Pain Specialist), or a specific schedule/follow-up, you MUST extract it.
+- Append [REFERRAL: Type | Name/Description | Urgency] to the end of your message.
+- Type should be: TEST, APPOINTMENT, or SCHEDULE.
+- Urgency: Low, Medium, High.
+- Example: [REFERRAL: TEST | Pelvic Ultrasound | High]
+- Example: [REFERRAL: APPOINTMENT | Endometriosis Specialist | Medium]
+- Example: [REFERRAL: SCHEDULE | Daily Pain Journaling | Low]"""
 
 @csrf_exempt
 @require_POST

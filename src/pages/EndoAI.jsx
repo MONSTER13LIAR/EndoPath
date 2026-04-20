@@ -20,12 +20,12 @@ export default function EndoAI() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { 
-    endoMessages, setEndoMessages,
-    currentStage, setCurrentStage,
-    unlockedStages, setUnlockedStages,
-    keyInsights, setKeyInsights
-  } = useChat()
-  
+  endoMessages, setEndoMessages,
+  currentStage, setCurrentStage,
+  unlockedStages, setUnlockedStages,
+  keyInsights, setKeyInsights,
+  referrals, setReferrals
+  } = useChat()  
   const [viewingStage, setViewingStage] = useState(currentStage)
   
   // Transition logic states
@@ -129,6 +129,21 @@ export default function EndoAI() {
           if (prev.includes(newInsight)) return prev
           return [...prev, newInsight]
         })
+      }
+
+      // Parse Referrals
+      const referralMatches = aiContent.matchAll(/\[REFERRAL:\s*([^\]]+)\]/g)
+      for (const match of referralMatches) {
+        const parts = match[1].split('|').map(s => s.trim())
+        if (parts.length === 3) {
+          const [type, name, urgency] = parts
+          setReferrals(prev => {
+            // Avoid duplicates
+            const exists = prev.some(r => r.name === name && r.type === type)
+            if (exists) return prev
+            return [...prev, { type, name, urgency, date: new Date().toLocaleDateString(), stage: currentStage }]
+          })
+        }
       }
 
       const cleanContent = aiContent.replace(/\[[^\]]*\]/g, '').trim()
