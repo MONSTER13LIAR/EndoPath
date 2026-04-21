@@ -9,9 +9,16 @@
   overflow: hidden;
 }
 
+.heroParticles .particle {
+  filter: blur(1.5px);
+  box-shadow: 0 0 15px 4px rgba(167, 139, 250, 0.6), 
+              0 0 30px 8px rgba(124, 58, 237, 0.4);
+  background: radial-gradient(circle, #A78BFA 10%, rgba(124, 58, 237, 0.9) 50%, transparent 100%);
+}
+
 .particle {
   position: absolute;
-  bottom: -20px;
+  bottom: -40px;
   background: radial-gradient(circle, #A78BFA 0%, rgba(124, 58, 237, 0.8) 40%, transparent 100%);
   border-radius: 50%;
   filter: blur(1px);

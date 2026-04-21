@@ -4,6 +4,7 @@ import Spline from '@splinetool/react-spline'
 import styles from './Home.module.css'
 import AnimatedHeadline from '../components/AnimatedHeadline'
 import FadeIn from '../components/FadeIn'
+import FlowingParticles from '../components/FlowingParticles'
 import { useAuth } from '../context/AuthContext'
 
 const WHY_CARDS = [
@@ -125,6 +126,8 @@ export default function Home() {
     <main>
       {/* ── Hero ── */}
       <section className={styles.hero}>
+        <FlowingParticles isHero={true} />
+        <div className={styles.heroLogoBg} />
         <AnimatedHeadline
           text="They said it was normal. It wasn't."
           className={styles.heroHeadline}

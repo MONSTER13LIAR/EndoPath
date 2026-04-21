@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styles from './Dashboard.module.css'
 import FadeIn from '../components/FadeIn'
@@ -98,12 +99,34 @@ function intensityTagColor(n) {
 
 export default function Dashboard() {
   const { user } = useAuth()
-  const { keyInsights } = useChat()
+  const { keyInsights, symptomLogs } = useChat()
   const isDemo = !user
   const navigate = useNavigate()
 
   // Only show the most recent 3 insights
   const latestInsights = keyInsights?.slice(-3).reverse() || []
+
+  // Derive chart data and health score from real logs
+  const realChartData = useMemo(() => {
+    if (!symptomLogs || symptomLogs.length === 0) return []
+    // Just take the last 14 logs for simplicity in the chart
+    return symptomLogs.slice(0, 14).map(log => log.intensity * 10).reverse()
+  }, [symptomLogs])
+
+  const realHealthScore = useMemo(() => {
+    if (!symptomLogs || symptomLogs.length === 0) return null
+    const avgIntensity = symptomLogs.reduce((acc, log) => acc + log.intensity, 0) / symptomLogs.length
+    // Higher intensity = lower score (0-10 scale maps to 0-100 score)
+    return Math.max(0, Math.min(100, Math.round(100 - (avgIntensity * 10))))
+  }, [symptomLogs])
+
+  // Use real logs if not demo
+  const displayLogs = isDemo ? RECENT_LOGS : (symptomLogs || [])
+  const displayChartData = isDemo ? CHART_DATA : realChartData
+  const displayHealthScore = isDemo ? '74' : (realHealthScore ?? '—')
+  const displayHealthSub = isDemo 
+    ? 'Good standing' 
+    : (realHealthScore > 70 ? 'Good standing' : realHealthScore > 40 ? 'Fair standing' : realHealthScore !== null ? 'Poor standing' : 'No data yet')
 
 
   return (
@@ -132,13 +155,13 @@ export default function Dashboard() {
                       strokeDashoffset={2 * Math.PI * 18 * 0.25}
                     />
                   )}
-                  <text x="22" y="27" textAnchor="middle" fontSize="11" fontWeight="800" fill={isDemo ? '#fff' : 'rgba(255,255,255,0.3)'}>
-                    {isDemo ? '74' : '—'}
+                  <text x="22" y="27" textAnchor="middle" fontSize="11" fontWeight="800" fill={(isDemo || realHealthScore !== null) ? '#fff' : 'rgba(255,255,255,0.3)'}>
+                    {displayHealthScore}
                   </text>
                 </svg>
                 <div className={styles.healthScoreText}>
                   <span className={styles.healthScoreLabel}>Health Score</span>
-                  <span className={styles.healthScoreSub}>{isDemo ? 'Good standing' : 'No data yet'}</span>
+                  <span className={styles.healthScoreSub}>{displayHealthSub}</span>
                 </div>
               </div>
               <button className={styles.logBtn} onClick={() => navigate('/endo-ai')}>
@@ -214,13 +237,13 @@ export default function Dashboard() {
                 <h3>Symptom Timeline</h3>
                 <span className={styles.cardBadge}>Last 14 days</span>
               </div>
-              {isDemo ? (
+              {displayChartData.length > 0 ? (
                 <>
                   <div className={styles.chartPlaceholder}>
-                    {CHART_DATA.map((h, i) => (
+                    {displayChartData.map((h, i) => (
                       <div key={i} className={styles.chartBarWrap}>
                         <div className={styles.chartBar} style={{ height: `${h}%`, background: intensityColor(h) }} />
-                        <span className={styles.chartDay}>{CHART_DAYS[i]}</span>
+                        <span className={styles.chartDay}>{isDemo ? CHART_DAYS[i] : ''}</span>
                       </div>
                     ))}
                   </div>
@@ -249,12 +272,12 @@ export default function Dashboard() {
                 {isDemo && <span className={styles.viewAll}>View all</span>}
               </div>
               <div className={styles.activityList}>
-                {isDemo ? (
-                  RECENT_LOGS.map((log, i) => {
+                {displayLogs.length > 0 ? (
+                  displayLogs.map((log, i) => {
                     const tc = intensityTagColor(log.intensity)
                     return (
                       <div key={i} className={styles.activityItem}>
-                        <div className={styles.activityEmoji}>{log.icon}</div>
+                        <div className={styles.activityEmoji}>{log.icon || '🌀'}</div>
                         <div className={styles.activityInfo}>
                           <strong>{log.symptom}</strong>
                           <span>{log.time}</span>

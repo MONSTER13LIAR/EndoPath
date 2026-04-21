@@ -39,7 +39,29 @@
 }
 
 
-.hero > *:not(.splineBg) {
+.heroLogoBg {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(80vw, 400px);
+  aspect-ratio: 1;
+  background-color: var(--primary);
+  mask-image: url('/Logo.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url('/Logo.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  opacity: 0.15;
+  z-index: 0 !important;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.hero > *:not(.splineBg):not(.heroLogoBg) {
   position: relative;
   z-index: 1;
 }

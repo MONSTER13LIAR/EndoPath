@@ -32,6 +32,11 @@ export function ChatProvider({ children }) {
     return saved ? JSON.parse(saved) : []
   })
 
+  const [symptomLogs, setSymptomLogs] = useState(() => {
+    const saved = localStorage.getItem('endopath_symptom_logs')
+    return saved ? JSON.parse(saved) : []
+  })
+
   useEffect(() => {
     if (endoMessages) localStorage.setItem('endopath_endo_chat', JSON.stringify(endoMessages))
   }, [endoMessages])
@@ -56,6 +61,10 @@ export function ChatProvider({ children }) {
     localStorage.setItem('endopath_referrals', JSON.stringify(referrals))
   }, [referrals])
 
+  useEffect(() => {
+    localStorage.setItem('endopath_symptom_logs', JSON.stringify(symptomLogs))
+  }, [symptomLogs])
+
   return (
     <ChatContext.Provider value={{ 
       endoMessages, setEndoMessages, 
@@ -63,7 +72,8 @@ export function ChatProvider({ children }) {
       currentStage, setCurrentStage,
       unlockedStages, setUnlockedStages,
       keyInsights, setKeyInsights,
-      referrals, setReferrals
+      referrals, setReferrals,
+      symptomLogs, setSymptomLogs
     }}>
       {children}
     </ChatContext.Provider>

@@ -24,7 +24,8 @@ export default function EndoAI() {
   currentStage, setCurrentStage,
   unlockedStages, setUnlockedStages,
   keyInsights, setKeyInsights,
-  referrals, setReferrals
+  referrals, setReferrals,
+  symptomLogs, setSymptomLogs
   } = useChat()  
   const [viewingStage, setViewingStage] = useState(currentStage)
   
@@ -129,6 +130,24 @@ export default function EndoAI() {
           if (prev.includes(newInsight)) return prev
           return [...prev, newInsight]
         })
+      }
+
+      // Parse Symptom Logs
+      const logMatch = aiContent.match(/\[SYMPTOM_LOG:\s*([^\]]+)\]/)
+      if (logMatch) {
+        const parts = logMatch[1].split('|').map(s => s.trim())
+        if (parts.length >= 2) {
+          const [symptom, intensity] = parts
+          setSymptomLogs(prev => [
+            { 
+              symptom, 
+              intensity: parseInt(intensity) || 0, 
+              time: 'Just now',
+              icon: '🌀' // Default icon
+            },
+            ...prev
+          ])
+        }
       }
 
       // Parse Referrals

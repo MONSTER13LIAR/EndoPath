@@ -4,6 +4,8 @@ import styles from './Library.module.css'
 import FadeIn from '../components/FadeIn'
 import FlowingParticles from '../components/FlowingParticles'
 import { useChat } from '../context/ChatContext'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 
 const STAGES = [
   { id: 'predict', label: 'Predict' },
@@ -16,7 +18,7 @@ const STAGES = [
 
 export default function Library() {
   const { isLocked } = useOutletContext()
-  const { endoMessages, unlockedStages } = useChat()
+  const { endoMessages, unlockedStages, symptomLogs, keyInsights, referrals } = useChat()
   const [query, setQuery] = useState('')
   const [response, setResponse] = useState(null)   // { question, answer }
   const [loading, setLoading] = useState(false)
@@ -62,6 +64,73 @@ export default function Library() {
   useEffect(() => {
     if (responseRef.current) responseRef.current.scrollTop = responseRef.current.scrollHeight
   }, [response])
+
+  const generatePDF = () => {
+    const doc = new jsPDF()
+    const primaryColor = [124, 58, 237] // #7C3AED
+
+    // Title
+    doc.setFontSize(22)
+    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    doc.text('EndoPath Health Report', 14, 22)
+    
+    doc.setFontSize(10)
+    doc.setTextColor(100)
+    doc.text(`Generated on ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 14, 30)
+    
+    // Symptom Logs Table
+    doc.setFontSize(16)
+    doc.setTextColor(0)
+    doc.text('Symptom History', 14, 45)
+    
+    const logData = (symptomLogs || []).map(log => [log.time, log.symptom, `Level ${log.intensity}`])
+    if (logData.length > 0) {
+      doc.autoTable({
+        startY: 50,
+        head: [['Time', 'Symptom', 'Intensity']],
+        body: logData,
+        headStyles: { fillColor: primaryColor },
+      })
+    } else {
+      doc.setFontSize(11)
+      doc.text('No symptoms logged yet.', 14, 55)
+      doc.lastAutoTable = { finalY: 55 }
+    }
+
+    // Key Insights
+    let finalY = (doc.lastAutoTable?.finalY || 55) + 15
+    doc.setFontSize(16)
+    doc.text('Key Insights', 14, finalY)
+    doc.setFontSize(11)
+    if (keyInsights && keyInsights.length > 0) {
+      keyInsights.forEach((insight, i) => {
+        doc.text(`• ${insight}`, 14, finalY + 10 + (i * 7))
+      })
+      finalY = finalY + 10 + (keyInsights.length * 7)
+    } else {
+      doc.text('No insights generated yet.', 14, finalY + 10)
+      finalY = finalY + 20
+    }
+
+    // Referrals
+    doc.setFontSize(16)
+    doc.text('Recommendations', 14, finalY)
+    
+    const refData = (referrals || []).map(ref => [ref.type, ref.name, ref.urgency, ref.stage])
+    if (refData.length > 0) {
+      doc.autoTable({
+        startY: finalY + 5,
+        head: [['Type', 'Recommendation', 'Urgency', 'Stage']],
+        body: refData,
+        headStyles: { fillColor: primaryColor },
+      })
+    } else {
+      doc.setFontSize(11)
+      doc.text('No recommendations yet.', 14, finalY + 15)
+    }
+
+    doc.save('EndoPath_Report.pdf')
+  }
 
   const handleSend = async (e) => {
     e.preventDefault()
