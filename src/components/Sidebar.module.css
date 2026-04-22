@@ -58,25 +58,27 @@
 }
 
 .sidebarLogo {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 900;
   color: #FF69B4;
   letter-spacing: -0.02em;
-  text-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+  text-shadow: 0 0 25px rgba(255, 105, 180, 0.4);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  text-decoration: none;
 }
 
 .logoImg {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(255, 105, 180, 0.5));
 }
 
 .logoText {
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .logoText span {

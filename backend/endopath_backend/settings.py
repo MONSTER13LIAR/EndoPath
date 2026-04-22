@@ -5,19 +5,22 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['your-app.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
+    'django.contrib.staticfiles',
     'corsheaders',
     'api',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -27,6 +30,7 @@ ROOT_URLCONF = 'endopath_backend.urls'
 DATABASES = {}
 
 CORS_ALLOWED_ORIGINS = [
+    'https://your-app.vercel.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
@@ -49,3 +53,7 @@ if not JWT_SECRET:
     raise RuntimeError('JWT_SECRET environment variable is not set')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

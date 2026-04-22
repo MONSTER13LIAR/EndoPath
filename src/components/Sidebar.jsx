@@ -9,10 +9,10 @@ export default function Sidebar({ isLocked, setIsLocked, mobileOpen, setMobileOp
   return (
     <aside className={`${styles.sidebar} ${isLocked ? styles.sidebarLocked : ''} ${mobileOpen ? styles.sidebarMobileOpen : ''}`}>
       <div className={styles.sidebarHeader}>
-        <div className={styles.sidebarLogo}>
+        <Link to="/" className={styles.sidebarLogo}>
           <img src="/Logo.png" alt="EndoPath Logo" className={styles.logoImg} />
           <div className={styles.logoText}>Endo<span>Path</span></div>
-        </div>
+        </Link>
         <button
           className={styles.mobileCloseBtn}
           onClick={() => setMobileOpen(false)}

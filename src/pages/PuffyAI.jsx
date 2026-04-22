@@ -47,7 +47,7 @@ export default function PuffyAI() {
     setLoading(true)
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/puffyai/chat/', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/puffyai/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
