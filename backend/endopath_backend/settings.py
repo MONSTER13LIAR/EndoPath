@@ -31,6 +31,7 @@ DATABASES = {}
 
 CORS_ALLOWED_ORIGINS = [
     'https://your-app.vercel.app',
+    'https://endo-path-jp7h.vercel.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
