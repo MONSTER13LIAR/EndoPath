@@ -145,9 +145,9 @@ export default function Home() {
             <a href="/dashboard" className={`${styles.btn} ${styles.primary} ${styles.lg}`}>
               Try EndoPath
             </a>
-            <button onClick={() => triggerLogin()} className={`${styles.btn} ${styles.ghost} ${styles.lg}`}>
+            <a href="/features" className={`${styles.btn} ${styles.ghost} ${styles.lg}`}>
               See How It Works
-            </button>
+            </a>
           </div>
         </FadeIn>
 
