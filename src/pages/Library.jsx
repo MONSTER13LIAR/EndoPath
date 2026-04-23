@@ -163,31 +163,31 @@ export default function Library() {
   const stageMessages = endoMessages ? endoMessages.filter(m => m.stage === selectedStage) : []
 
   // Mini Body Mapper component for the library grid
-  const MiniBody = ({ parts }) => (
-    <svg viewBox="0 0 22 28" className={styles.miniBodySvg}>
-      <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5" fill={parts.includes('Head') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8" fill={parts.includes('Neck') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2" fill={parts.includes('Chest') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      
-      {/* Abdomen Grid */}
-      <ellipse cx="8.5" cy="11.5" rx="1.8" ry="1.2" fill={parts.includes('Upper Left Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="11" cy="11.5" rx="1.2" ry="1.2" fill={parts.includes('Upper Center Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="13.5" cy="11.5" rx="1.8" ry="1.2" fill={parts.includes('Upper Right Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      
-      <ellipse cx="8.2" cy="14.5" rx="2.2" ry="1.5" fill={parts.includes('Lower Left Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="11" cy="14.5" rx="1.5" ry="1.5" fill={parts.includes('Lower Center Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="13.8" cy="14.5" rx="2.2" ry="1.5" fill={parts.includes('Lower Right Abdomen') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-
-      <ellipse cx="8.5" cy="18.5" rx="2.5" ry="2" fill={parts.includes('Left Pelvic Region') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      <ellipse cx="13.5" cy="18.5" rx="2.5" ry="2" fill={parts.includes('Right Pelvic Region') ? '#22c55e' : 'rgba(255,255,255,0.05)'} />
-      
-      {/* Simplified Limbs */}
-      <path d="M5.5 10 L3 17" stroke={parts.some(p => p.includes('Left') && p.includes('Arm')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
-      <path d="M16.5 10 L19 17" stroke={parts.some(p => p.includes('Right') && p.includes('Arm')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
-      <path d="M8.5 18 L8 28" stroke={parts.some(p => p.includes('Left') && p.includes('Leg')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
-      <path d="M13.5 18 L14 28" stroke={parts.some(p => p.includes('Right') && p.includes('Leg')) ? '#22c55e' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
-    </svg>
-  )
+  const MiniBody = ({ parts }) => {
+    const g = '#22c55e'
+    const dim = 'rgba(255,255,255,0.05)'
+    const dimLine = 'rgba(255,255,255,0.1)'
+    const ABDOMEN_KEYS = ['Hypochondriac','Lumbar','Iliac','Epigastric','Umbilical','Hypogastric','Abdomen']
+    const anyAbdomen = parts.some(p => ABDOMEN_KEYS.some(k => p.includes(k)))
+    const anyPelvis = parts.some(p => p.includes('Ovary') || p === 'Uterus' || p.includes('Pelvic'))
+    const anyRightArm = parts.some(p => p.includes('Right') && (p.includes('Arm') || p.includes('Forearm')))
+    const anyLeftArm = parts.some(p => p.includes('Left') && (p.includes('Arm') || p.includes('Forearm')))
+    const anyRightLeg = parts.some(p => p.includes('Right') && (p.includes('Leg') || p.includes('Thigh')))
+    const anyLeftLeg = parts.some(p => p.includes('Left') && (p.includes('Leg') || p.includes('Thigh')))
+    return (
+      <svg viewBox="0 0 22 30" className={styles.miniBodySvg}>
+        <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5" fill={parts.includes('Head') ? g : dim} />
+        <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8" fill={parts.includes('Neck') ? g : dim} />
+        <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2" fill={parts.includes('Chest') ? g : dim} />
+        <rect x="6.5" y="11" width="9" height="4.5" rx="0.5" fill={anyAbdomen ? g : dim} />
+        <rect x="5.5" y="15.5" width="11" height="3" rx="0.8" fill={anyPelvis ? g : dim} />
+        <path d="M5.5 9 L3 16" stroke={anyRightArm ? g : dimLine} strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M16.5 9 L19 16" stroke={anyLeftArm ? g : dimLine} strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M8 18.5 L7.5 29" stroke={anyRightLeg ? g : dimLine} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14 18.5 L14.5 29" stroke={anyLeftLeg ? g : dimLine} strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    )
+  }
 
   return (
     <div className={styles.libraryLayout}>

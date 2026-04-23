@@ -294,45 +294,145 @@ export default function EndoAI() {
           <div className={aiStyles.modalOverlay} onClick={() => setShowBodyModal(false)}>
             <div className={`${aiStyles.modalContent} ${aiStyles.bodyModal}`} onClick={e => e.stopPropagation()}>
               <h2>Select Areas of Concern</h2>
+              <p className={aiStyles.bodyModalNote}>Tap all areas where you feel pain or discomfort</p>
               <div className={aiStyles.bodyDiagramContainer}>
                 <div className={aiStyles.medicalScanner}></div>
-                <svg viewBox="0 0 100 140" className={aiStyles.bodySvg}>
-                  {/* Human Silhouette Background */}
-                  <path 
-                    d="M50,5 C55,5 59,9 59,14 C59,19 55,23 50,23 C45,23 41,19 41,14 C41,9 45,5 50,5 M38,25 C42,23 58,23 62,25 C70,27 75,35 75,45 L75,70 C75,75 72,78 68,78 L65,78 L65,130 C65,135 60,138 55,138 L45,138 C40,138 35,135 35,130 L35,78 L32,78 C28,78 25,75 25,70 L25,45 C25,35 30,27 38,25 Z" 
-                    fill="rgba(34, 197, 94, 0.02)" 
-                    stroke="rgba(34, 197, 94, 0.15)" 
-                    strokeWidth="0.5"
-                  />
-                  
-                  {/* Head & Neck */}
-                  <circle cx="50" cy="14" r="8" className={`${aiStyles.bodyPart} ${selectedParts.includes('Head') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Head')} />
-                  <rect x="46" cy="22" width="8" height="4" className={`${aiStyles.bodyPart} ${selectedParts.includes('Neck') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Neck')} />
-                  
-                  {/* Chest */}
-                  <path d="M35,30 Q50,25 65,30 L65,45 Q50,50 35,45 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Chest') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Chest')} />
-                  
-                  {/* Abdomen Regions - Grid Style */}
-                  <rect x="36" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Left Abdomen')} />
-                  <rect x="45.5" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Center Abdomen')} />
-                  <rect x="55" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Right Abdomen')} />
-                  
-                  <rect x="36" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Left Abdomen')} />
-                  <rect x="45.5" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Center Abdomen')} />
-                  <rect x="55" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Right Abdomen')} />
+                <svg viewBox="0 0 100 190" className={aiStyles.bodySvg}>
 
-                  {/* Pelvic Regions */}
-                  <path d="M36,68 Q43,72 50,68 Q57,72 64,68 L62,78 Q50,82 38,78 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Pelvic Region')} />
-                  
-                  {/* Arms */}
-                  <path d="M25,30 L32,30 L32,70 L25,70 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Arm') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Arm')} />
-                  <path d="M68,30 L75,30 L75,70 L68,70 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Arm') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Arm')} />
-                  
-                  {/* Legs */}
-                  <path d="M36,80 L48,80 L48,135 L36,135 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Leg') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Leg')} />
-                  <path d="M52,80 L64,80 L64,135 L52,135 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Leg') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Leg')} />
+                  {/* ── SILHOUETTE BACKGROUNDS (non-interactive) ── */}
+                  <ellipse cx="50" cy="11" rx="9.5" ry="10.5" fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.22)" strokeWidth="0.5" style={{pointerEvents:'none'}}/>
+                  <path d="M45,20.5 L45,27 L55,27 L55,20.5" fill="rgba(34,197,94,0.04)" stroke="none" style={{pointerEvents:'none'}}/>
+                  <path d="M27,27 Q50,23 73,27 L75,46 Q73,58 72,68 Q74,80 74,89 Q76,100 74,108 L26,108 Q24,100 26,89 Q26,80 28,68 Q27,58 25,46 Z"
+                    fill="rgba(34,197,94,0.025)" stroke="rgba(34,197,94,0.18)" strokeWidth="0.45" style={{pointerEvents:'none'}}/>
+                  <path d="M27,28 L14,33 L11,68 L12,100 L24,98 L24,68 L27,33 Z"
+                    fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.15)" strokeWidth="0.35" style={{pointerEvents:'none'}}/>
+                  <path d="M73,28 L86,33 L89,68 L88,100 L76,98 L76,68 L73,33 Z"
+                    fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.15)" strokeWidth="0.35" style={{pointerEvents:'none'}}/>
+                  <path d="M30,108 L48,108 L47,143 L45,182 Q39,186 33,186 Q28,186 29,182 L29,143 Z"
+                    fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.15)" strokeWidth="0.35" style={{pointerEvents:'none'}}/>
+                  <path d="M52,108 L70,108 L71,143 L71,182 Q68,186 62,186 Q56,186 55,182 L53,143 Z"
+                    fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.15)" strokeWidth="0.35" style={{pointerEvents:'none'}}/>
+
+                  {/* ── HEAD ── */}
+                  <ellipse cx="50" cy="11" rx="9" ry="9.5"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Head') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Head')} />
+
+                  {/* ── NECK ── */}
+                  <rect x="46" y="21" width="8" height="6" rx="1.5"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Neck') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Neck')} />
+
+                  {/* ── SHOULDERS ── */}
+                  <path d="M29,27 L42,27 L42,36 Q36,37 29,36 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Shoulder') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Shoulder')} />
+                  <path d="M58,27 L71,27 L71,36 Q64,37 58,36 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Shoulder') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Shoulder')} />
+
+                  {/* ── CHEST ── */}
+                  <path d="M29,36 Q50,32 71,36 L71,50 Q50,55 29,50 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Chest') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Chest')} />
+
+                  {/* ── ABDOMEN — 9 clinical zones ── */}
+                  {/* cols x: 29–43 | 43–57 | 57–71   rows y: 50–63 | 63–76 | 76–89 */}
+
+                  {/* Row 1 – Upper Abdomen */}
+                  <rect x="29" y="50" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Hypochondriac') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Hypochondriac')} />
+                  <rect x="43" y="50" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Epigastric') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Epigastric')} />
+                  <rect x="57" y="50" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Hypochondriac') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Hypochondriac')} />
+
+                  {/* Row 2 – Mid Abdomen */}
+                  <rect x="29" y="63" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Lumbar') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Lumbar')} />
+                  <rect x="43" y="63" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Umbilical') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Umbilical')} />
+                  <rect x="57" y="63" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Lumbar') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Lumbar')} />
+
+                  {/* Row 3 – Lower Abdomen */}
+                  <rect x="29" y="76" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Iliac') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Iliac')} />
+                  <rect x="43" y="76" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Hypogastric') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Hypogastric')} />
+                  <rect x="57" y="76" width="14" height="13" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Iliac') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Iliac')} />
+
+                  {/* ── PELVIS — 3 zones (wider for female hips) ── */}
+                  <rect x="26" y="89" width="17" height="19" rx="2"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Ovary') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Ovary')} />
+                  <rect x="43" y="89" width="14" height="19" rx="1"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Uterus') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Uterus')} />
+                  <rect x="57" y="89" width="17" height="19" rx="2"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Ovary') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Ovary')} />
+
+                  {/* ── ARMS ── */}
+                  <path d="M14,33 L26,28 L26,68 L14,68 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Upper Arm') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Upper Arm')} />
+                  <path d="M74,28 L86,33 L86,68 L74,68 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Upper Arm') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Upper Arm')} />
+                  <path d="M12,68 L25,68 L24,100 L11,100 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Forearm') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Forearm')} />
+                  <path d="M75,68 L88,68 L89,100 L76,100 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Forearm') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Forearm')} />
+
+                  {/* ── LEGS ── */}
+                  <path d="M30,108 L48,108 L47,143 L30,143 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Thigh') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Thigh')} />
+                  <path d="M52,108 L70,108 L70,143 L53,143 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Thigh') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Thigh')} />
+                  <path d="M30,143 L47,143 L45,182 Q39,186 33,186 Q28,186 29,182 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Lower Leg') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Right Lower Leg')} />
+                  <path d="M53,143 L70,143 L71,182 Q68,186 62,186 Q56,186 55,182 Z"
+                    className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Lower Leg') ? aiStyles.bodyPartActive : ''}`}
+                    onClick={() => toggleBodyPart('Left Lower Leg')} />
+
+                  {/* ── ZONE LABELS ── */}
+                  {/* Abdomen Row 1 (y center ≈ 56.5) */}
+                  <text x="36" y="57" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>R.Hypo</text>
+                  <text x="50" y="57" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>Epigastric</text>
+                  <text x="64" y="57" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>L.Hypo</text>
+                  {/* Abdomen Row 2 (y center ≈ 69.5) */}
+                  <text x="36" y="70.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>R.Lumbar</text>
+                  <text x="50" y="70.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>Umbilical</text>
+                  <text x="64" y="70.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>L.Lumbar</text>
+                  {/* Abdomen Row 3 (y center ≈ 82.5) */}
+                  <text x="36" y="83.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>R.Iliac</text>
+                  <text x="50" y="81.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>Hypo-</text>
+                  <text x="50" y="84" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>gastric</text>
+                  <text x="64" y="83.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>L.Iliac</text>
+                  {/* Pelvis (y center ≈ 98.5) */}
+                  <text x="34.5" y="99.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>R.Ovary</text>
+                  <text x="50" y="99.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>Uterus</text>
+                  <text x="65.5" y="99.5" textAnchor="middle" fontSize="2.2" fill="rgba(255,255,255,0.5)" style={{pointerEvents:'none',userSelect:'none'}}>L.Ovary</text>
+
                 </svg>
               </div>
+              <p className={aiStyles.bodyModalNote} style={{marginTop:'-1rem', fontSize:'0.7rem', opacity:0.5}}>R. = Your Right &nbsp;·&nbsp; L. = Your Left (from your body's perspective)</p>
               <div className={aiStyles.selectedPartsList}>
                 {selectedParts.map(part => (
                   <span key={part} className={aiStyles.partBadge}>{part} <button onClick={() => toggleBodyPart(part)}>×</button></span>

@@ -675,11 +675,20 @@
 }
 
 .bodyModal {
-  max-width: 600px;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.bodyModalNote {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 1rem 0;
+  text-align: center;
 }
 
 .bodyDiagramContainer {
@@ -717,7 +726,7 @@
 
 .bodySvg {
   width: 100%;
-  max-width: 320px;
+  max-width: 210px;
   height: auto;
   filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.1));
 }
