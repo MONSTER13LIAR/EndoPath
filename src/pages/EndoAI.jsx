@@ -288,6 +288,49 @@ export default function EndoAI() {
             </div>
           </div>
         )}
+
+        {/* Body Diagram Modal */}
+        {showBodyModal && (
+          <div className={aiStyles.modalOverlay} onClick={() => setShowBodyModal(false)}>
+            <div className={`${aiStyles.modalContent} ${aiStyles.bodyModal}`} onClick={e => e.stopPropagation()}>
+              <h2>Select Areas of Concern</h2>
+              <div className={aiStyles.bodyDiagramContainer}>
+                <svg viewBox="0 0 22 28" className={aiStyles.bodySvg}>
+                  <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Head') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Head')} />
+                  <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8" className={`${aiStyles.bodyPart} ${selectedParts.includes('Neck') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Neck')} />
+                  <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Chest') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Chest')} />
+                  
+                  {/* Abdomen Grid */}
+                  <ellipse cx="8.5" cy="11.5" rx="1.8" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Left Abdomen')} />
+                  <ellipse cx="11" cy="11.5" rx="1.2" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Center Abdomen')} />
+                  <ellipse cx="13.5" cy="11.5" rx="1.8" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Right Abdomen')} />
+                  
+                  <ellipse cx="8.2" cy="14.5" rx="2.2" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Left Abdomen')} />
+                  <ellipse cx="11" cy="14.5" rx="1.5" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Center Abdomen')} />
+                  <ellipse cx="13.8" cy="14.5" rx="2.2" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Right Abdomen')} />
+
+                  <ellipse cx="8.5" cy="18.5" rx="2.5" ry="2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Pelvic Region')} />
+                  <ellipse cx="13.5" cy="18.5" rx="2.5" ry="2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Pelvic Region')} />
+                  
+                  {/* Simplified Limbs */}
+                  <path d="M5.5 10 L3 17" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Left') && p.includes('Arm')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Left Arm')} />
+                  <path d="M16.5 10 L19 17" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Right') && p.includes('Arm')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Right Arm')} />
+                  <path d="M8.5 18 L8 28" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Left') && p.includes('Leg')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Left Leg')} />
+                  <path d="M13.5 18 L14 28" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Right') && p.includes('Leg')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Right Leg')} />
+                </svg>
+              </div>
+              <div className={aiStyles.selectedPartsList}>
+                {selectedParts.map(part => (
+                  <span key={part} className={aiStyles.partBadge}>{part} <button onClick={() => toggleBodyPart(part)}>×</button></span>
+                ))}
+              </div>
+              <div className={aiStyles.modalActions}>
+                <button className={aiStyles.continueBtn} style={{ background: 'rgba(255,255,255,0.05)' }} onClick={() => setSelectedParts([])}>Clear All</button>
+                <button className={aiStyles.continueBtn} onClick={() => setShowBodyModal(false)}>Done</button>
+              </div>
+            </div>
+          </div>
+        )}
       </FadeIn>
     </div>
   )

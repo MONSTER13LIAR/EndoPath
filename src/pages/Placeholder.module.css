@@ -674,6 +674,31 @@
   filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6));
 }
 
+.bodyModal {
+  max-width: 600px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bodyDiagramContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.bodySvg {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+}
+
 .selectedPartsList {
   display: flex;
   flex-wrap: wrap;
