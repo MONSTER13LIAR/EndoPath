@@ -295,28 +295,42 @@ export default function EndoAI() {
             <div className={`${aiStyles.modalContent} ${aiStyles.bodyModal}`} onClick={e => e.stopPropagation()}>
               <h2>Select Areas of Concern</h2>
               <div className={aiStyles.bodyDiagramContainer}>
-                <svg viewBox="0 0 22 28" className={aiStyles.bodySvg}>
-                  <ellipse cx="11" cy="2.5" rx="2.2" ry="2.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Head') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Head')} />
-                  <ellipse cx="11" cy="5.2" rx="1.1" ry="0.8" className={`${aiStyles.bodyPart} ${selectedParts.includes('Neck') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Neck')} />
-                  <ellipse cx="11" cy="8.5" rx="5.5" ry="2.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Chest') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Chest')} />
+                <div className={aiStyles.medicalScanner}></div>
+                <svg viewBox="0 0 100 140" className={aiStyles.bodySvg}>
+                  {/* Human Silhouette Background */}
+                  <path 
+                    d="M50,5 C55,5 59,9 59,14 C59,19 55,23 50,23 C45,23 41,19 41,14 C41,9 45,5 50,5 M38,25 C42,23 58,23 62,25 C70,27 75,35 75,45 L75,70 C75,75 72,78 68,78 L65,78 L65,130 C65,135 60,138 55,138 L45,138 C40,138 35,135 35,130 L35,78 L32,78 C28,78 25,75 25,70 L25,45 C25,35 30,27 38,25 Z" 
+                    fill="rgba(34, 197, 94, 0.02)" 
+                    stroke="rgba(34, 197, 94, 0.15)" 
+                    strokeWidth="0.5"
+                  />
                   
-                  {/* Abdomen Grid */}
-                  <ellipse cx="8.5" cy="11.5" rx="1.8" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Left Abdomen')} />
-                  <ellipse cx="11" cy="11.5" rx="1.2" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Center Abdomen')} />
-                  <ellipse cx="13.5" cy="11.5" rx="1.8" ry="1.2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Right Abdomen')} />
+                  {/* Head & Neck */}
+                  <circle cx="50" cy="14" r="8" className={`${aiStyles.bodyPart} ${selectedParts.includes('Head') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Head')} />
+                  <rect x="46" cy="22" width="8" height="4" className={`${aiStyles.bodyPart} ${selectedParts.includes('Neck') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Neck')} />
                   
-                  <ellipse cx="8.2" cy="14.5" rx="2.2" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Left Abdomen')} />
-                  <ellipse cx="11" cy="14.5" rx="1.5" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Center Abdomen')} />
-                  <ellipse cx="13.8" cy="14.5" rx="2.2" ry="1.5" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Right Abdomen')} />
+                  {/* Chest */}
+                  <path d="M35,30 Q50,25 65,30 L65,45 Q50,50 35,45 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Chest') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Chest')} />
+                  
+                  {/* Abdomen Regions - Grid Style */}
+                  <rect x="36" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Left Abdomen')} />
+                  <rect x="45.5" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Center Abdomen')} />
+                  <rect x="55" cy="48" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Upper Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Upper Right Abdomen')} />
+                  
+                  <rect x="36" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Left Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Left Abdomen')} />
+                  <rect x="45.5" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Center Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Center Abdomen')} />
+                  <rect x="55" cy="57.5" width="9" height="9" rx="1" className={`${aiStyles.bodyPart} ${selectedParts.includes('Lower Right Abdomen') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Lower Right Abdomen')} />
 
-                  <ellipse cx="8.5" cy="18.5" rx="2.5" ry="2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Pelvic Region')} />
-                  <ellipse cx="13.5" cy="18.5" rx="2.5" ry="2" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Pelvic Region')} />
+                  {/* Pelvic Regions */}
+                  <path d="M36,68 Q43,72 50,68 Q57,72 64,68 L62,78 Q50,82 38,78 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Pelvic Region') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Pelvic Region')} />
                   
-                  {/* Simplified Limbs */}
-                  <path d="M5.5 10 L3 17" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Left') && p.includes('Arm')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Left Arm')} />
-                  <path d="M16.5 10 L19 17" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Right') && p.includes('Arm')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Right Arm')} />
-                  <path d="M8.5 18 L8 28" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Left') && p.includes('Leg')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Left Leg')} />
-                  <path d="M13.5 18 L14 28" className={`${aiStyles.bodyPart} ${selectedParts.some(p => p.includes('Right') && p.includes('Leg')) ? aiStyles.bodyPartActive : ''}`} strokeWidth="1" onClick={() => toggleBodyPart('Right Leg')} />
+                  {/* Arms */}
+                  <path d="M25,30 L32,30 L32,70 L25,70 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Arm') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Arm')} />
+                  <path d="M68,30 L75,30 L75,70 L68,70 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Arm') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Arm')} />
+                  
+                  {/* Legs */}
+                  <path d="M36,80 L48,80 L48,135 L36,135 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Left Leg') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Left Leg')} />
+                  <path d="M52,80 L64,80 L64,135 L52,135 Z" className={`${aiStyles.bodyPart} ${selectedParts.includes('Right Leg') ? aiStyles.bodyPartActive : ''}`} onClick={() => toggleBodyPart('Right Leg')} />
                 </svg>
               </div>
               <div className={aiStyles.selectedPartsList}>

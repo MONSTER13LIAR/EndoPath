@@ -691,12 +691,35 @@
   border-radius: 20px;
   width: 100%;
   margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(34, 197, 94, 0.1);
+  box-shadow: inset 0 0 30px rgba(34, 197, 94, 0.05);
+}
+
+.medicalScanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22c55e, transparent);
+  box-shadow: 0 0 15px #22c55e;
+  z-index: 5;
+  opacity: 0.5;
+  animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: -5%; }
+  100% { top: 105%; }
 }
 
 .bodySvg {
   width: 100%;
-  max-width: 450px;
+  max-width: 320px;
   height: auto;
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.1));
 }
 
 .selectedPartsList {
