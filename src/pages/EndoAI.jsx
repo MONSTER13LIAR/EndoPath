@@ -111,16 +111,18 @@ export default function EndoAI() {
       
       // Parse All Markers
       const probMatch = aiContent.match(/\[PROBABILITY:\s*(\d+)%\]/)
+      const isEnoughMessages = updatedMessages.length >= 5
+      
       if (probMatch) {
         setProbability(probMatch[1])
-        if (parseInt(probMatch[1]) > 40) setShowConfirmation(true)
+        if (parseInt(probMatch[1]) > 40 && isEnoughMessages) setShowConfirmation(true)
       }
       
-      if (aiContent.includes('MOVE_TO_PREPARE')) { setCanMoveToPrepare(true); setShowConfirmation(true) }
-      if (aiContent.includes('MOVE_TO_ACTION')) { setCanMoveToAction(true); setShowConfirmation(true) }
-      if (aiContent.includes('MOVE_TO_MANAGE')) { setCanMoveToManage(true); setShowConfirmation(true) }
-      if (aiContent.includes('MOVE_TO_STABILIZE')) { setCanMoveToStabilize(true); setShowConfirmation(true) }
-      if (aiContent.includes('MOVE_TO_RECOVER')) { setCanMoveToRecover(true); setShowConfirmation(true) }
+      if (aiContent.includes('MOVE_TO_PREPARE')) { setCanMoveToPrepare(true); if (isEnoughMessages) setShowConfirmation(true) }
+      if (aiContent.includes('MOVE_TO_ACTION')) { setCanMoveToAction(true); if (isEnoughMessages) setShowConfirmation(true) }
+      if (aiContent.includes('MOVE_TO_MANAGE')) { setCanMoveToManage(true); if (isEnoughMessages) setShowConfirmation(true) }
+      if (aiContent.includes('MOVE_TO_STABILIZE')) { setCanMoveToStabilize(true); if (isEnoughMessages) setShowConfirmation(true) }
+      if (aiContent.includes('MOVE_TO_RECOVER')) { setCanMoveToRecover(true); if (isEnoughMessages) setShowConfirmation(true) }
 
       // Parse Key Insights
       const insightMatch = aiContent.match(/\[KEY_INSIGHT:\s*([^\]]+)\]/)
