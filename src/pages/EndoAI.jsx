@@ -34,6 +34,7 @@ export default function EndoAI() {
   const [probability, setProbability] = useState(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [showNewChatModal, setShowNewChatModal] = useState(false)
+  const [screeningAnswers, setScreeningAnswers] = useState({ q1: null, q2: null, q3: null })
 
   // Markers for all stages
   const [canMoveToPrepare, setCanMoveToPrepare] = useState(false)
@@ -276,6 +277,29 @@ export default function EndoAI() {
             <div className={`${aiStyles.modalContent} ${aiStyles.confirmationModal}`} onClick={e => e.stopPropagation()}>
               <h2>Prediction & Next Steps</h2>
               {probability && <div className={aiStyles.probabilitySection}><span className={aiStyles.probLabel}>Probability</span><div className={aiStyles.probValue}>{probability}%</div></div>}
+              
+              <div className={aiStyles.confirmationPrompt}>
+                <p className={aiStyles.latestQuestion}>Is your period pain severe enough to stop daily activities like work, school or plans?</p>
+                <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
+                  <button className={aiStyles.continueBtn} type="button">Yes</button>
+                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
+                  <button className={aiStyles.continueBtn} type="button">No</button>
+                </div>
+
+                <p className={aiStyles.latestQuestion}>Do you feel pain during or after sex, or pelvic pain outside of your period?</p>
+                <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
+                  <button className={aiStyles.continueBtn} type="button">Yes</button>
+                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
+                  <button className={aiStyles.continueBtn} type="button">No</button>
+                </div>
+
+                <p className={aiStyles.latestQuestion}>Does bathroom pain — bowel or bladder — get worse around your period?</p>
+                <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
+                  <button className={aiStyles.continueBtn} type="button">Yes</button>
+                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
+                  <button className={aiStyles.continueBtn} type="button">No</button>
+                </div>
+              </div>
               
               <div className={aiStyles.modalActions}>
                 {canMoveToPrepare && currentStage === 'predict' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('prepare', "Moved to Prepare Stage.")}>Move to Prepare</button>}

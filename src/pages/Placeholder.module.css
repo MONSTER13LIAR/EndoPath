@@ -857,6 +857,13 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+.screeningBtnActive {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
 .moveToPrepareBtn {
   background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
   color: #fff;
