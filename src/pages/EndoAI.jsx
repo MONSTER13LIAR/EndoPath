@@ -176,11 +176,22 @@ export default function EndoAI() {
   }
 
   // Universal transition handler
+  const [targetStage, setTargetStage] = useState(null)
+  
   const performTransition = (nextStage, greeting) => {
-    setIsTransitioning(true); setShowConfirmation(false)
+    setTargetStage(nextStage)
+    setIsTransitioning(true)
+    setShowConfirmation(false)
+    
     setTimeout(() => {
-      if (!unlockedStages.includes(nextStage)) setUnlockedStages(prev => [...prev, nextStage])
-      setCurrentStage(nextStage); setIsTransitioning(false)
+      if (!unlockedStages.includes(nextStage)) {
+        setUnlockedStages(prev => [...prev, nextStage])
+      }
+      setCurrentStage(nextStage)
+      setViewingStage(nextStage) // Ensure viewing stage updates immediately
+      setIsTransitioning(false)
+      setTargetStage(null)
+      setScreeningAnswers({ q1: null, q2: null, q3: null }) // Reset for next time
       setMessages(prev => [...prev, { role: 'ai', stage: nextStage, content: greeting }])
     }, 2000)
   }
@@ -220,7 +231,9 @@ export default function EndoAI() {
               </div>
             )
           })}
-          {isTransitioning && <div className={`${aiStyles.transitionDot} ${aiStyles['animateTo' + currentStage.charAt(0).toUpperCase() + currentStage.slice(1)]}`}></div>}
+          {isTransitioning && targetStage && (
+            <div className={`${aiStyles.transitionDot} ${aiStyles['animateTo' + targetStage.charAt(0).toUpperCase() + targetStage.slice(1)]}`}></div>
+          )}
         </div>
 
         {/* Chat Window */}
@@ -281,33 +294,100 @@ export default function EndoAI() {
               <div className={aiStyles.confirmationPrompt}>
                 <p className={aiStyles.latestQuestion}>Is your period pain severe enough to stop daily activities like work, school or plans?</p>
                 <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
-                  <button className={aiStyles.continueBtn} type="button">Yes</button>
-                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
-                  <button className={aiStyles.continueBtn} type="button">No</button>
+                  {['Yes', 'Sometimes', 'No'].map(ans => (
+                    <button 
+                      key={ans}
+                      className={`${aiStyles.continueBtn} ${screeningAnswers.q1 === ans ? aiStyles.screeningBtnActive : ''}`} 
+                      type="button"
+                      onClick={() => setScreeningAnswers(prev => ({ ...prev, q1: ans }))}
+                    >
+                      {ans}
+                    </button>
+                  ))}
                 </div>
 
                 <p className={aiStyles.latestQuestion}>Do you feel pain during or after sex, or pelvic pain outside of your period?</p>
                 <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
-                  <button className={aiStyles.continueBtn} type="button">Yes</button>
-                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
-                  <button className={aiStyles.continueBtn} type="button">No</button>
+                  {['Yes', 'Sometimes', 'No'].map(ans => (
+                    <button 
+                      key={ans}
+                      className={`${aiStyles.continueBtn} ${screeningAnswers.q2 === ans ? aiStyles.screeningBtnActive : ''}`} 
+                      type="button"
+                      onClick={() => setScreeningAnswers(prev => ({ ...prev, q2: ans }))}
+                    >
+                      {ans}
+                    </button>
+                  ))}
                 </div>
 
                 <p className={aiStyles.latestQuestion}>Does bathroom pain — bowel or bladder — get worse around your period?</p>
                 <div className={aiStyles.modalActions} style={{marginTop: '0.5rem', marginBottom: '1.5rem'}}>
-                  <button className={aiStyles.continueBtn} type="button">Yes</button>
-                  <button className={aiStyles.continueBtn} type="button">Sometimes</button>
-                  <button className={aiStyles.continueBtn} type="button">No</button>
+                  {['Yes', 'Sometimes', 'No'].map(ans => (
+                    <button 
+                      key={ans}
+                      className={`${aiStyles.continueBtn} ${screeningAnswers.q3 === ans ? aiStyles.screeningBtnActive : ''}`} 
+                      type="button"
+                      onClick={() => setScreeningAnswers(prev => ({ ...prev, q3: ans }))}
+                    >
+                      {ans}
+                    </button>
+                  ))}
                 </div>
               </div>
               
               <div className={aiStyles.modalActions}>
-                {canMoveToPrepare && currentStage === 'predict' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('prepare', "Moved to Prepare Stage.")}>Move to Prepare</button>}
-                {canMoveToAction && currentStage === 'prepare' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('action', "Moved to Action Stage.")}>Move to Action</button>}
-                {canMoveToManage && currentStage === 'action' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('manage', "Moved to Manage Stage.")}>Move to Manage</button>}
-                {canMoveToStabilize && currentStage === 'manage' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('stabilize', "Moved to Stabilize Stage.")}>Move to Stabilize</button>}
-                {canMoveToRecover && currentStage === 'stabilize' && <button className={aiStyles.moveToPrepareBtn} onClick={() => performTransition('recover', "Moved to Recover Stage.")}>Move to Recover</button>}
-                <button className={aiStyles.continueBtn} onClick={() => setShowConfirmation(false)}>Continue</button>
+                {canMoveToPrepare && currentStage === 'predict' && (
+                  <button 
+                    className={aiStyles.moveToPrepareBtn} 
+                    disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                    onClick={() => performTransition('prepare', "Moved to Prepare Stage.")}
+                  >
+                    Move to Prepare
+                  </button>
+                )}
+                {canMoveToAction && currentStage === 'prepare' && (
+                  <button 
+                    className={aiStyles.moveToPrepareBtn} 
+                    disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                    onClick={() => performTransition('action', "Moved to Action Stage.")}
+                  >
+                    Move to Action
+                  </button>
+                )}
+                {canMoveToManage && currentStage === 'action' && (
+                  <button 
+                    className={aiStyles.moveToPrepareBtn} 
+                    disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                    onClick={() => performTransition('manage', "Moved to Manage Stage.")}
+                  >
+                    Move to Manage
+                  </button>
+                )}
+                {canMoveToStabilize && currentStage === 'manage' && (
+                  <button 
+                    className={aiStyles.moveToPrepareBtn} 
+                    disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                    onClick={() => performTransition('stabilize', "Moved to Stabilize Stage.")}
+                  >
+                    Move to Stabilize
+                  </button>
+                )}
+                {canMoveToRecover && currentStage === 'stabilize' && (
+                  <button 
+                    className={aiStyles.moveToPrepareBtn} 
+                    disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                    onClick={() => performTransition('recover', "Moved to Recover Stage.")}
+                  >
+                    Move to Recover
+                  </button>
+                )}
+                <button 
+                  className={aiStyles.continueBtn} 
+                  onClick={() => setShowConfirmation(false)}
+                  disabled={!screeningAnswers.q1 || !screeningAnswers.q2 || !screeningAnswers.q3}
+                >
+                  Continue
+                </button>
               </div>
             </div>
           </div>

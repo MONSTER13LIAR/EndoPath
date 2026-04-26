@@ -852,9 +852,10 @@
   transition: all 0.2s ease;
 }
 
-.continueBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+.continueBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
 .screeningBtnActive {
@@ -877,6 +878,14 @@
   box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
   margin-bottom: 1.5rem;
   width: 100%;
+}
+
+.moveToPrepareBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.8);
 }
 
 .moveToPrepareBtn:hover {
