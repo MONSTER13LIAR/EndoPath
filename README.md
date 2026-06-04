@@ -20,6 +20,10 @@ Deploy    : Vercel frontend, Render-ready Django backend
 
 https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L
 
+## Live App
+
+https://endo-path-jp7h.vercel.app
+
 # EndoPath
 
 ---
@@ -184,7 +188,7 @@ EndoPath/
   vercel.json
 ```
 
-## Getting Started
+## Local Getting Started
 
 ### 1. Install frontend dependencies
 
