@@ -1,5 +1,7 @@
 <p align="center">
   <img src="public/Logo.png" alt="EndoPath logo" width="150" />
+  <br />
+  <strong>EndoPath</strong>
 </p>
 
 ```text
@@ -18,6 +20,8 @@ Deploy    : Vercel frontend, Render-ready Django backend
 
 [![Watch the EndoPath demo](https://img.youtube.com/vi/1CHN4Owsac8/maxresdefault.jpg)](https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L)
 
+Demo video link: https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L
+
 # EndoPath
 
 ---
@@ -32,29 +36,43 @@ EndoPath is an AI-powered endometriosis companion built to help users predict, c
 
 ![EndoPath landing page](docs/screenshots/home-hero.png)
 
+The landing screen introduces EndoPath with the line "They said it was normal. It wasn't." It sets the purpose of the app clearly: an AI-powered endometriosis companion for prediction, confirmation, understanding, management, and recovery.
+
 ### Predict to Recover CTA
 
 ![Predict to Recover call to action](docs/screenshots/predict-to-recover.png)
+
+This section pushes the user into the core journey. The 3D Spline assistant and "Predict to Recover" call-to-action show that EndoPath is not only a tracker, but a guided workflow from early symptoms to recovery planning.
 
 ### Health Dashboard
 
 ![EndoPath dashboard](docs/screenshots/dashboard.png)
 
+The dashboard summarizes the user's health state in one place. It tracks flare risk, logged days, average pain level, next cycle timing, symptom timeline, recent activity, upcoming events, and EndoAI insights.
+
 ### EndoAI Staged Assistant
 
 ![EndoAI staged assistant](docs/screenshots/endoai.png)
+
+EndoAI is the main health assistant. It uses a staged protocol with locked and unlocked steps, keeps each stage's conversation history, accepts text, body-area selections, and uploaded images, and extracts useful health data while chatting.
 
 ### Referral Tool
 
 ![EndoPath referral tool](docs/screenshots/referral-tool.png)
 
+The referral tool collects medical next steps suggested by EndoAI. Tests, appointments, and schedules are grouped by stage and labelled by urgency so the user can prepare better for clinical conversations.
+
 ### Health Records Library
 
 ![EndoPath library](docs/screenshots/library.png)
 
-### PuffyAI Support
+The library stores the user's EndoAI history, body maps, uploaded photos, symptom logs, key insights, and recommendations. It also includes NerdAI, which searches and explains information from the user's saved health records.
+
+### Support / PuffyAI Available 24 / 7
 
 ![PuffyAI support assistant](docs/screenshots/puffyai.png)
+
+This screen shows PuffyAI, the app support assistant. PuffyAI is available 24 / 7 for questions about EndoPath features, account flow, how to use the app, and what each tool does.
 
 ## Core Features
 
@@ -67,6 +85,44 @@ EndoPath is an AI-powered endometriosis companion built to help users predict, c
 - **NerdAI library assistant**: answers questions using the user's stored EndoAI chat history.
 - **PuffyAI support**: app support assistant for feature help, account questions, and workflow guidance.
 - **Google login**: signs users in with Google OAuth and stores the app session locally.
+
+## EndoAI Protocol
+
+EndoAI uses a 6-stage protocol:
+
+```text
+1. Predict   : asks pinpointing symptom questions and estimates probability or flare risk.
+2. Prepare   : collects context, reports, body-map areas, age, risk, time, and cost concerns.
+3. Action    : guides immediate relief steps and treatment preparation.
+4. Manage    : supports long-term diet, supplements, medication routines, and daily patterns.
+5. Stabilize : checks mental health, consistency, activity level, and ongoing improvements.
+6. Recover   : reflects on recovery progress and helps the user return to normal activity.
+```
+
+The app starts with only Predict unlocked. As EndoAI sees enough context, it returns transition markers such as `[MOVE_TO_PREPARE]`, `[MOVE_TO_ACTION]`, `[MOVE_TO_MANAGE]`, `[MOVE_TO_STABILIZE]`, and `[MOVE_TO_RECOVER]`. The frontend reads these markers, confirms the move with the user, unlocks the next stage, and keeps previous stage memory available in the Library.
+
+EndoAI also extracts structured markers from natural conversation:
+
+```text
+[PROBABILITY: 75%]
+[KEY_INSIGHT: Lower right pelvic pain]
+[SYMPTOM_LOG: Pelvic Pain | 7]
+[REFERRAL: TEST | Pelvic Ultrasound | High]
+```
+
+These markers power the dashboard, health score, recent activity, key insights, referral tool, and exportable health report.
+
+## Text and Image Model Switching
+
+EndoAI can work with normal text chats and image-supported chats. The backend checks whether any chat message includes an uploaded image:
+
+```text
+No image uploaded  -> use default text model
+Image uploaded     -> use preferred vision model
+Vision unavailable -> fall back to text model and ask for a description
+```
+
+The default text model is used for normal symptom conversations. When the user uploads a report, scan, or symptom-related image, the backend switches to a vision-capable model from the configured vision model list. If that vision call fails or the selected model is not available, the backend falls back to the default text model so the chat does not stop.
 
 ## App Flow
 
