@@ -18,9 +18,7 @@ Deploy    : Vercel frontend, Render-ready Django backend
 
 ## Demo Video
 
-[![Watch the EndoPath demo](https://img.youtube.com/vi/1CHN4Owsac8/maxresdefault.jpg)](https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L)
-
-Demo video link: https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L
+https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L
 
 # EndoPath
 
@@ -30,45 +28,43 @@ EndoPath is an AI-powered endometriosis companion built to help users predict, c
 
 > EndoPath is not a medical diagnosis tool. It is designed to support tracking, education, preparation, and communication with healthcare professionals.
 
-## Screenshots
-
-### Landing Page
+## Landing Page
 
 ![EndoPath landing page](docs/screenshots/home-hero.png)
 
 The landing screen introduces EndoPath with the line "They said it was normal. It wasn't." It sets the purpose of the app clearly: an AI-powered endometriosis companion for prediction, confirmation, understanding, management, and recovery.
 
-### Predict to Recover CTA
+## Predict to Recover CTA
 
 ![Predict to Recover call to action](docs/screenshots/predict-to-recover.png)
 
 This section pushes the user into the core journey. The 3D Spline assistant and "Predict to Recover" call-to-action show that EndoPath is not only a tracker, but a guided workflow from early symptoms to recovery planning.
 
-### Health Dashboard
+## Health Dashboard
 
 ![EndoPath dashboard](docs/screenshots/dashboard.png)
 
 The dashboard summarizes the user's health state in one place. It tracks flare risk, logged days, average pain level, next cycle timing, symptom timeline, recent activity, upcoming events, and EndoAI insights.
 
-### EndoAI Staged Assistant
+## EndoAI Staged Assistant
 
 ![EndoAI staged assistant](docs/screenshots/endoai.png)
 
 EndoAI is the main health assistant. It uses a staged protocol with locked and unlocked steps, keeps each stage's conversation history, accepts text, body-area selections, and uploaded images, and extracts useful health data while chatting.
 
-### Referral Tool
+## Referral Tool
 
 ![EndoPath referral tool](docs/screenshots/referral-tool.png)
 
 The referral tool collects medical next steps suggested by EndoAI. Tests, appointments, and schedules are grouped by stage and labelled by urgency so the user can prepare better for clinical conversations.
 
-### Health Records Library
+## Health Records Library
 
 ![EndoPath library](docs/screenshots/library.png)
 
 The library stores the user's EndoAI history, body maps, uploaded photos, symptom logs, key insights, and recommendations. It also includes NerdAI, which searches and explains information from the user's saved health records.
 
-### Support / PuffyAI Available 24 / 7
+## Support / PuffyAI Available 24 / 7
 
 ![PuffyAI support assistant](docs/screenshots/puffyai.png)
 
