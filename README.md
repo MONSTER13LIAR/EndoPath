@@ -18,6 +18,8 @@ Deploy    : Vercel frontend, Render-ready Django backend
 
 ## Demo Video
 
+[![Watch the EndoPath demo](https://img.youtube.com/vi/1CHN4Owsac8/maxresdefault.jpg)](https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L)
+
 https://youtu.be/1CHN4Owsac8?si=mIqY5dZFKlR6aJ8L
 
 ## Live App
