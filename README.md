@@ -68,7 +68,13 @@ The referral tool collects medical next steps suggested by EndoAI. Tests, appoin
 
 The library stores the user's EndoAI history, body maps, uploaded photos, symptom logs, key insights, and recommendations. It also includes NerdAI, which searches and explains information from the user's saved health records.
 
-## Support / PuffyAI Available 24 / 7
+## Support
+
+![EndoPath support screen](docs/screenshots/support.png)
+
+The support screen gives users two ways to get help: instant AI support through PuffyAI or human support for account, billing, and care-team questions. PuffyAI is recommended because it responds immediately and understands the user's EndoPath context.
+
+## PuffyAI
 
 ![PuffyAI support assistant](docs/screenshots/puffyai.png)
 
